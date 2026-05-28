@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>TargetNXT — B2B Market Intelligence Hub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --red:          #f91e1e;
+  --red-dark:     #d01010;
+  --red-mid:      rgba(249,30,30,0.12);
+  --red-light:    #fff0fa;
+  --navy:         #193441;
+  --navy-dark:    #0f172a;
+  --navy-mid:     #1e293b;
+  --navy-light:   rgba(255,255,255,0.08);
+  --white:        #ffffff;
+  --bg:           #f7fafc;
+  --bg-alt:       #f5fcfe;
+  --text:         #193441;
+  --text-2:       #475569;
+  --muted:        #64748b;
+  --border:       #e8e4f0;
+  --border-2:     #f0eaf8;
+  --green:        #11612e;
+  --green-light:  rgba(17,97,46,0.1);
+  --blue:         #1159af;
+  --blue-light:   rgba(17,89,175,0.1);
+  --orange:       #f7630c;
+  --amber:        #f5a524;
+  --grad-main:    linear-gradient(135deg, #f50 0%, #ff00ae 100%);
+  --grad-text:    linear-gradient(140deg, #f50, #ff00ae);
+  --btn-glow:     0px 0px 10px 5px rgba(255,255,255,0.5) inset;
+  --radius-sm:    6px;
+  --radius-md:    10px;
+  --radius-lg:    14px;
+  --radius-xl:    20px;
+  --shadow-sm:    0 2px 8px rgba(25,52,65,0.07);
+  --shadow-md:    0 6px 20px rgba(25,52,65,0.12);
+  --shadow-lg:    0 12px 40px rgba(25,52,65,0.16);
+  --font:         'Figtree', sans-serif;
+  --nav-h:        66px;
+  --trans:        0.18s ease;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { font-family: var(--font); font-size: 15px; color: var(--text); background: var(--white); line-height: 1.65; }
+a { color: inherit; text-decoration: none; }
+button { font-family: var(--font); cursor: pointer; border: none; outline: none; }
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+.page { display: none; min-height: 100vh; }
+.page.active { display: block; animation: fadeIn 0.22s ease; }
+@keyframes fadeIn { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
+
+/* NAV */
+nav {
+  position: sticky; top: 0; z-index: 200; height: var(--nav-h);
+  background: var(--navy); box-shadow: 0 2px 16px rgba(25,52,65,0.35);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 32px;
+}
+.nav-logo { display: flex; align-items: center; gap: 10px; cursor: pointer; }
+.logo-mark {
+  width: 36px; height: 36px; background: var(--red); border-radius: var(--radius-sm);
+  box-shadow: var(--btn-glow);
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 900; font-size: 18px; color: #fff;
+}
+.logo-text { font-weight: 700; font-size: 17px; color: #fff; letter-spacing: -0.2px; }
+.logo-text em { color: var(--red); font-style: normal; }
+.nav-links { display: flex; gap: 2px; }
+.nav-link {
+  padding: 7px 15px; border-radius: var(--radius-sm);
+  font-size: 13.5px; font-weight: 600; color: rgba(255,255,255,0.72);
+  cursor: pointer; transition: var(--trans);
+}
+.nav-link:hover, .nav-link.active { color: #fff; background: rgba(255,255,255,0.09); }
+.nav-right { display: flex; align-items: center; gap: 10px; }
+.btn-outline {
+  padding: 8px 18px; border-radius: var(--radius-sm);
+  font-size: 13px; font-weight: 600; color: #fff;
+  border: 1.5px solid rgba(255,255,255,0.32); background: transparent;
+  transition: var(--trans);
+}
+.btn-outline:hover { border-color: rgba(255,255,255,0.65); background: rgba(255,255,255,0.06); }
+.btn-cta {
+  padding: 9px 22px; border-radius: var(--radius-sm);
+  font-size: 13px; font-weight: 700; color: #fff;
+  background: var(--red);
+  box-shadow: var(--btn-glow);
+  transition: var(--trans);
+}
+.btn-cta:hover { background: var(--red-dark); box-shadow: 0 4px 18px rgba(249,30,30,0.4); }
+
+/* PAGE HERO */
+.page-hero {
+  background: linear-gradient(160deg, #f7fafc 0%, #f5fcfe 60%, #fff0fa 100%);
+  border-bottom: 2px solid var(--border);
+  padding: 56px 32px 52px; position: relative; overflow: hidden;
+}
+.page-hero::after {
+  content: ''; position: absolute; right: -80px; top: -80px;
+  width: 360px; height: 360px; border-radius: 50%;
+  background: rgba(249,30,30,0.05); pointer-events: none;
+}
+.page-hero::before {
+  content: ''; position: absolute; left: -50px; bottom: -100px;
+  width: 260px; height: 260px; border-radius: 50%;
+  background: rgba(25,52,65,0.03); pointer-events: none;
+}
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: #ffffff; border: 1px solid var(--border);
+  border-radius: 40px; padding: 5px 16px;
+  font-size: 12px; font-weight: 700; color: var(--red); margin-bottom: 20px;
+  box-shadow: var(--shadow-sm);
+}
+.live-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--red); animation: blink 1.8s infinite; }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.35} }
+.page-hero h1 {
+  font-size: clamp(28px,4vw,46px); font-weight: 900; color: var(--navy);
+  line-height: 1.18; margin-bottom: 16px;
+}
+.page-hero h1 .accent {
+  background: var(--grad-text);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.page-hero p { font-size: 15px; color: var(--text-2); max-width: 560px; line-height: 1.78; margin-bottom: 30px; }
+
+/* SEARCH BAR */
+.hero-search-wrap { max-width: 580px; }
+.search-box {
+  display: flex; background: #fff; border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md); overflow: hidden;
+  border: 1.5px solid var(--border);
+}
+.search-box input {
+  flex: 1; border: none; outline: none; padding: 15px 20px;
+  font-size: 14px; font-family: var(--font); color: var(--text);
+}
+.search-box input::placeholder { color: var(--muted); }
+.search-box-btn {
+  padding: 13px 24px; background: var(--red); color: #fff;
+  font-size: 13.5px; font-weight: 700; font-family: var(--font);
+  border: none; cursor: pointer; transition: var(--trans); white-space: nowrap;
+  box-shadow: var(--btn-glow);
+}
+.search-box-btn:hover { background: var(--red-dark); }
+.search-tags { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 15px; }
+.search-tag {
+  font-size: 11.5px; padding: 5px 13px; border-radius: 40px;
+  background: #ffffff; border: 1px solid var(--border);
+  color: var(--text-2); cursor: pointer; transition: var(--trans); font-weight: 600;
+  box-shadow: var(--shadow-sm);
+}
+.search-tag:hover { background: rgba(249,30,30,0.07); border-color: rgba(249,30,30,0.3); color: var(--red); }
+
+/* STATS STRIP */
+.stats-strip {
+  background: var(--navy); padding: 16px 32px;
+  display: flex; gap: 0; border-bottom: 3px solid var(--red);
+}
+.stat { flex: 1; text-align: center; padding: 10px 16px; border-right: 1px solid rgba(255,255,255,0.08); }
+.stat:last-child { border-right: none; }
+.stat-num {
+  font-size: 22px; font-weight: 900;
+  background: var(--grad-text);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.stat-lbl { font-size: 10.5px; color: rgba(255,255,255,0.55); text-transform: uppercase; letter-spacing: 0.6px; margin-top: 3px; }
+
+/* SECTION */
+.section { padding: 44px 32px; }
+.section.alt { background: var(--bg-alt); }
+.sec-hdr { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 26px; }
+.sec-title { font-size: 21px; font-weight: 800; color: var(--navy); }
+.sec-title span {
+  background: var(--grad-text);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.sec-eyebrow { font-size: 11px; font-weight: 700; color: var(--red); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+.sec-link { font-size: 13px; font-weight: 700; color: var(--red); cursor: pointer; display: flex; align-items: center; gap: 4px; }
+.sec-link:hover { color: var(--red-dark); }
+
+/* PILL LABEL (brand pill from reference) */
+.pill-outer {
+  display: inline-block; padding: 5px;
+  border-radius: 40px; background: #fbfcfc; border: 1px solid #edeff3;
+  margin-bottom: 16px;
+}
+.pill-inner {
+  padding: 5px 16px; border-radius: 40px;
+  background: #ffffff; border: 1px solid #e5ebf2;
+}
+.pill-text {
+  display: flex; align-items: center; gap: 8px;
+  background: var(--grad-text);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text; font-weight: 600; font-size: 13px;
+}
+
+/* COMPANY CARDS */
+.c-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(244px,1fr)); gap: 16px; }
+.c-card {
+  background: var(--white); border: 1.5px solid var(--border);
+  border-radius: var(--radius-lg); padding: 20px;
+  cursor: pointer; transition: var(--trans); box-shadow: var(--shadow-sm);
+}
+.c-card:hover { border-color: var(--red); box-shadow: var(--shadow-md); transform: translateY(-3px); }
+.c-card-top { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+.c-logo {
+  width: 46px; height: 46px; border-radius: var(--radius-md);
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 900; font-size: 18px; color: #fff; flex-shrink: 0;
+}
+.c-name { font-size: 14px; font-weight: 800; color: var(--navy); line-height: 1.3; }
+.c-ind  { font-size: 11.5px; color: var(--muted); margin-top: 2px; font-weight: 500; }
+.c-tags { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 12px; }
+.tag { font-size: 10.5px; font-weight: 700; padding: 3px 10px; border-radius: 5px; }
+.tag-navy   { background: #edf2f7; color: var(--navy); }
+.tag-red    { background: rgba(249,30,30,0.09); color: var(--red-dark); }
+.tag-green  { background: rgba(17,97,46,0.09); color: var(--green); }
+.tag-blue   { background: rgba(17,89,175,0.09); color: var(--blue); }
+.tag-orange { background: rgba(247,99,12,0.1); color: var(--orange); }
+.verified-row { display: flex; align-items: center; gap: 6px; font-size: 11.5px; font-weight: 700; color: var(--green); }
+
+/* INDUSTRY CARDS */
+.ind-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(148px,1fr)); gap: 12px; }
+.ind-card {
+  background: var(--white); border: 1.5px solid var(--border);
+  border-radius: var(--radius-md); padding: 18px 12px; text-align: center;
+  cursor: pointer; transition: var(--trans); box-shadow: var(--shadow-sm);
+}
+.ind-card:hover { border-color: var(--red); background: rgba(249,30,30,0.04); }
+.ind-icon { font-size: 26px; margin-bottom: 8px; }
+.ind-name { font-size: 12.5px; font-weight: 700; color: var(--navy); }
+.ind-count { font-size: 10.5px; color: var(--muted); margin-top: 3px; }
+
+/* SEARCH / FILTER BAR */
+.filter-bar-wrap {
+  background: var(--white); border-bottom: 2px solid var(--border);
+  padding: 16px 32px;
+}
+.filter-row { display: flex; gap: 10px; margin-bottom: 12px; align-items: center; }
+.filter-search {
+  flex: 1; display: flex; align-items: center; gap: 10px;
+  background: var(--bg); border: 1.5px solid var(--border);
+  border-radius: var(--radius-md); padding: 10px 16px; transition: var(--trans);
+}
+.filter-search:focus-within { border-color: var(--red); background: var(--white); }
+.filter-search input { flex: 1; border: none; outline: none; background: transparent; font-size: 14px; font-family: var(--font); color: var(--text); }
+.filter-search input::placeholder { color: var(--muted); }
+.filter-chips { display: flex; gap: 7px; flex-wrap: wrap; }
+.chip {
+  font-size: 12px; font-weight: 600; padding: 6px 14px; border-radius: 40px;
+  border: 1.5px solid var(--border); color: var(--muted);
+  background: var(--white); cursor: pointer; transition: var(--trans);
+}
+.chip:hover { border-color: var(--navy); color: var(--navy); }
+.chip.on { background: var(--navy); border-color: var(--navy); color: #fff; }
+.chip.on:hover { background: #1e3d4e; }
+.results-meta {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 12px 32px; background: var(--bg); border-bottom: 1px solid var(--border);
+}
+.res-count { font-size: 13px; color: var(--muted); }
+.res-count b { color: var(--navy); font-weight: 800; }
+.sort-label { font-size: 12.5px; color: var(--muted); cursor: pointer; }
+
+/* RESULT ROWS */
+.result-list { padding: 20px 32px; display: flex; flex-direction: column; gap: 10px; }
+.r-row {
+  background: var(--white); border: 1.5px solid var(--border);
+  border-radius: var(--radius-lg); padding: 16px 20px;
+  display: flex; align-items: center; gap: 16px;
+  cursor: pointer; transition: var(--trans); box-shadow: var(--shadow-sm);
+}
+.r-row:hover { border-color: var(--red); box-shadow: var(--shadow-md); }
+.r-logo {
+  width: 50px; height: 50px; border-radius: var(--radius-md);
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 900; font-size: 20px; color: #fff; flex-shrink: 0;
+}
+.r-main { flex: 1; min-width: 0; }
+.r-name { font-size: 14.5px; font-weight: 800; color: var(--navy); display: flex; align-items: center; gap: 7px; margin-bottom: 2px; }
+.r-meta { font-size: 12px; color: var(--muted); margin-bottom: 7px; }
+.r-side { text-align: right; flex-shrink: 0; }
+.r-emp-num { font-size: 15px; font-weight: 800; color: var(--navy); }
+.r-emp-lbl { font-size: 10.5px; color: var(--muted); }
+.r-score { font-size: 11px; font-weight: 700; color: var(--green); margin-top: 4px; background: rgba(17,97,46,0.1); padding: 2px 8px; border-radius: 5px; display: inline-block; }
+
+/* PROFILE PAGE */
+.breadcrumb {
+  font-size: 12.5px; color: var(--muted); padding: 14px 32px;
+  background: var(--bg); border-bottom: 1px solid var(--border);
+  display: flex; gap: 6px; align-items: center;
+}
+.breadcrumb .crumb { color: var(--red); cursor: pointer; font-weight: 600; }
+.breadcrumb .sep { color: var(--border); }
+.profile-band { background: var(--navy); padding: 30px 32px 0; }
+.ph-row { display: flex; gap: 20px; align-items: flex-start; margin-bottom: 24px; }
+.ph-logo {
+  width: 74px; height: 74px; border-radius: var(--radius-lg);
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 900; font-size: 28px; color: #fff; flex-shrink: 0;
+  border: 3px solid rgba(255,255,255,0.14);
+}
+.ph-info { flex: 1; }
+.ph-name { font-size: 23px; font-weight: 900; color: #fff; margin-bottom: 5px; }
+.ph-tagline { font-size: 13px; color: rgba(255,255,255,0.62); margin-bottom: 14px; }
+.badges { display: flex; gap: 7px; flex-wrap: wrap; }
+.badge { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 6px; }
+.badge-g { background: rgba(17,97,46,0.22); color: #6ee7b7; }
+.badge-b { background: rgba(17,89,175,0.22); color: #93c5fd; }
+.badge-o { background: rgba(249,30,30,0.18); color: #ffb0b0; }
+.kpi-strip { display: flex; background: var(--navy-dark); border-top: 1px solid rgba(255,255,255,0.08); }
+.kpi { flex: 1; padding: 15px 10px; text-align: center; border-right: 1px solid rgba(255,255,255,0.07); }
+.kpi:last-child { border-right: none; }
+.kpi-val {
+  font-size: 18px; font-weight: 900;
+  background: var(--grad-text);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.kpi-lbl { font-size: 9.5px; text-transform: uppercase; letter-spacing: 0.6px; color: rgba(255,255,255,0.48); margin-top: 3px; }
+.profile-body { padding: 24px 32px; display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.info-card {
+  background: var(--white); border: 1.5px solid var(--border);
+  border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow-sm);
+}
+.ic-head {
+  background: var(--bg-alt); padding: 12px 18px; border-bottom: 1px solid var(--border);
+  font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: var(--navy);
+  display: flex; align-items: center; gap: 7px;
+}
+.ic-head::before { content: ''; width: 3px; height: 14px; background: var(--red); border-radius: 2px; }
+.ic-body { padding: 4px 0; }
+.ic-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 18px; border-bottom: 1px solid var(--border-2); }
+.ic-row:last-child { border-bottom: none; }
+.ic-key { font-size: 12px; color: var(--muted); }
+.ic-val { font-size: 12px; font-weight: 700; color: var(--text); text-align: right; max-width: 200px; }
+.ic-val.red    { color: var(--red); }
+.ic-val.green  { color: var(--green); }
+.ic-val.blue   { color: var(--blue); }
+.ic-val.orange { color: var(--orange); }
+.tech-cloud { padding: 14px 18px; display: flex; flex-wrap: wrap; gap: 7px; }
+.tech-pill {
+  font-size: 11px; font-weight: 700; padding: 4px 11px; border-radius: 6px;
+  background: rgba(17,89,175,0.09); color: var(--blue);
+  border: 1px solid rgba(17,89,175,0.15);
+}
+
+/* EXEC PAGE */
+.exec-band { background: var(--navy); padding: 30px 32px 0; }
+.exec-top { display: flex; gap: 20px; align-items: flex-start; margin-bottom: 22px; }
+.exec-av {
+  width: 78px; height: 78px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 800; font-size: 26px; color: #fff; flex-shrink: 0;
+  border: 3px solid var(--red); background: #1e3d4e;
+  box-shadow: 0 0 0 5px rgba(249,30,30,0.18);
+}
+.exec-name { font-size: 23px; font-weight: 900; color: #fff; margin-bottom: 4px; }
+.exec-title {
+  font-size: 14px; font-weight: 700; margin-bottom: 5px;
+  background: var(--grad-text);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.exec-co { font-size: 13px; color: rgba(255,255,255,0.58); display: flex; align-items: center; gap: 6px; }
+.exec-co span { color: rgba(255,255,255,0.88); cursor: pointer; }
+.exec-co span:hover { color: var(--red); }
+.exec-body { padding: 24px 32px; display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.focus-li { display: flex; align-items: center; gap: 10px; font-size: 12.5px; color: var(--text-2); padding: 9px 18px; border-bottom: 1px solid var(--border-2); }
+.focus-li:last-child { border-bottom: none; }
+.focus-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--red); flex-shrink: 0; }
+.act-item { display: flex; gap: 12px; padding: 10px 18px; border-bottom: 1px solid var(--border-2); }
+.act-item:last-child { border-bottom: none; }
+.act-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; margin-top: 5px; }
+.act-text { font-size: 12.5px; color: var(--text-2); line-height: 1.55; }
+.act-time { font-size: 11px; color: var(--muted); margin-top: 3px; }
+
+/* CRITERIA PAGE */
+.crit-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(258px,1fr)); gap: 14px; }
+.crit-card {
+  background: var(--white); border: 1.5px solid var(--border);
+  border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow-sm);
+  transition: var(--trans);
+}
+.crit-card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
+.crit-card-head { padding: 13px 16px; display: flex; align-items: center; gap: 10px; }
+.crit-card-head .icon { font-size: 20px; }
+.crit-card-head .label { font-size: 13px; font-weight: 800; }
+.crit-card-body { font-size: 12px; color: var(--muted); line-height: 1.65; padding: 0 16px 14px; }
+.crit-card.ban .crit-card-head { background: rgba(249,30,30,0.07); }
+.crit-card.ban .crit-card-head .label { color: var(--red-dark); }
+.crit-card.ban { border-top: 3px solid var(--red); }
+.crit-card.ok .crit-card-head { background: rgba(17,97,46,0.07); }
+.crit-card.ok .crit-card-head .label { color: var(--green); }
+.crit-card.ok { border-top: 3px solid var(--green); }
+.warning-bar {
+  background: rgba(249,30,30,0.05); border: 1.5px solid rgba(249,30,30,0.2);
+  border-radius: var(--radius-md); padding: 14px 20px; margin-bottom: 26px;
+  display: flex; align-items: flex-start; gap: 11px; font-size: 13px; color: var(--red-dark);
+}
+.warning-bar .wi { font-size: 20px; flex-shrink: 0; }
+
+/* FOOTER */
+footer {
+  background: var(--navy-dark); border-top: 3px solid var(--red);
+  padding: 14px 32px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;
+}
+.footer-left { font-size: 12px; color: rgba(255,255,255,0.42); }
+.footer-right { font-size: 12px; color: rgba(255,255,255,0.52); display: flex; align-items: center; gap: 8px; }
+.f-badge { display: flex; align-items: center; gap: 5px; background: rgba(17,97,46,0.18); color: #6ee7b7; padding: 3px 10px; border-radius: 5px; font-size: 11px; font-weight: 700; }
+.f-dot { width: 6px; height: 6px; border-radius: 50%; background: #34d399; animation: blink 2s infinite; }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo" onclick="go('home')">
+    <div class="logo-mark">T</div>
+    <div class="logo-text">Target<em>NXT</em></div>
+  </div>
+  <div class="nav-links">
+    <div class="nav-link" id="nl-home"     onclick="go('home')">Home</div>
+    <div class="nav-link" id="nl-search"   onclick="go('search')">Companies</div>
+    <div class="nav-link" id="nl-criteria" onclick="go('criteria')">Acceptance Policy</div>
+  </div>
+  <div class="nav-right">
+    <button class="btn-outline">Sign In</button>
+    <button class="btn-cta" onclick="go('search')">Submit Company</button>
+  </div>
+</nav>
+
+<!-- HOME -->
+<div class="page active" id="page-home">
+  <div class="page-hero">
+    <div class="hero-badge"><span class="live-dot"></span>B2B Intelligence Hub · partners.targetnxt.com</div>
+    <h1>Discover the companies &amp; leaders<br>driving <span class="accent">modern B2B growth</span></h1>
+    <p>Verified firmographic intelligence, executive profiles, technographic insights, and market signals — all in one place. Built on TargetNXT's 99% accuracy promise.</p>
+    <div class="hero-search-wrap">
+      <div class="search-box">
+        <input type="text" id="home-q" placeholder="Search companies, industries, executives, technologies…" onkeydown="if(event.key==='Enter')go('search')"/>
+        <button class="search-box-btn" onclick="go('search')">Search Now</button>
+      </div>
+      <div class="search-tags">
+        <span class="search-tag" onclick="go('search')">SaaS Companies</span>
+        <span class="search-tag" onclick="go('search')">Healthcare</span>
+        <span class="search-tag" onclick="go('search')">Fortune 500</span>
+        <span class="search-tag" onclick="go('search')">CIO / CTO Profiles</span>
+        <span class="search-tag" onclick="go('search')">HubSpot Users</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="stats-strip">
+    <div class="stat"><div class="stat-num">48K+</div><div class="stat-lbl">Verified Companies</div></div>
+    <div class="stat"><div class="stat-num">120K+</div><div class="stat-lbl">Executive Profiles</div></div>
+    <div class="stat"><div class="stat-num">380+</div><div class="stat-lbl">Industries</div></div>
+    <div class="stat"><div class="stat-num">99%</div><div class="stat-lbl">Data Accuracy</div></div>
+    <div class="stat"><div class="stat-num">15+</div><div class="stat-lbl">Compliance Standards</div></div>
+  </div>
+
+  <div class="section">
+    <div class="sec-hdr">
+      <div>
+        <div class="sec-eyebrow">Hand-verified</div>
+        <div class="sec-title">Featured <span>Companies</span></div>
+      </div>
+      <span class="sec-link" onclick="go('search')">Browse all companies →</span>
+    </div>
+    <div class="c-grid" id="home-grid"></div>
+  </div>
+
+  <div class="section alt">
+    <div class="sec-hdr">
+      <div>
+        <div class="sec-eyebrow">Explore</div>
+        <div class="sec-title">Browse by <span>Industry</span></div>
+      </div>
+      <span class="sec-link" onclick="go('search')">All industries →</span>
+    </div>
+    <div class="ind-grid">
+      <div class="ind-card"><div class="ind-icon">💻</div><div class="ind-name">SaaS &amp; Software</div><div class="ind-count">8,412 companies</div></div>
+      <div class="ind-card"><div class="ind-icon">🏥</div><div class="ind-name">Healthcare</div><div class="ind-count">5,290 companies</div></div>
+      <div class="ind-card"><div class="ind-icon">🏭</div><div class="ind-name">Manufacturing</div><div class="ind-count">4,870 companies</div></div>
+      <div class="ind-card"><div class="ind-icon">🛒</div><div class="ind-name">E-Commerce</div><div class="ind-count">3,650 companies</div></div>
+      <div class="ind-card"><div class="ind-icon">📊</div><div class="ind-name">FinTech</div><div class="ind-count">3,120 companies</div></div>
+      <div class="ind-card"><div class="ind-icon">📡</div><div class="ind-name">MarTech</div><div class="ind-count">2,880 companies</div></div>
+      <div class="ind-card"><div class="ind-icon">🚛</div><div class="ind-name">Logistics</div><div class="ind-count">2,400 companies</div></div>
+      <div class="ind-card"><div class="ind-icon">🎓</div><div class="ind-name">EdTech</div><div class="ind-count">1,760 companies</div></div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-left">partners.targetnxt.com · © 2026 TargetNXT. All rights reserved.</div>
+    <div class="footer-right">
+      <div class="f-badge"><div class="f-dot"></div>Spam-Free Platform</div>
+      No Crypto · No Casino · No Stock Trading
+    </div>
+  </footer>
+</div>
+
+<!-- SEARCH -->
+<div class="page" id="page-search">
+  <div class="filter-bar-wrap">
+    <div class="filter-row">
+      <div class="filter-search">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <input type="text" id="sq" placeholder="Search companies, industries, technologies…" oninput="doSearch()"/>
+      </div>
+      <button class="btn-cta" onclick="doSearch()">Search</button>
+    </div>
+    <div class="filter-chips">
+      <button class="chip on"  onclick="toggleChip(this)">All Types</button>
+      <button class="chip on"  onclick="toggleChip(this)">SaaS</button>
+      <button class="chip"     onclick="toggleChip(this)">Healthcare</button>
+      <button class="chip"     onclick="toggleChip(this)">FinTech</button>
+      <button class="chip"     onclick="toggleChip(this)">Manufacturing</button>
+      <button class="chip on"  onclick="toggleChip(this)">USA</button>
+      <button class="chip"     onclick="toggleChip(this)">UK</button>
+      <button class="chip on"  onclick="toggleChip(this)">✓ Verified Only</button>
+      <button class="chip"     onclick="toggleChip(this)">1–500 Employees</button>
+      <button class="chip"     onclick="toggleChip(this)">Series A–C</button>
+    </div>
+  </div>
+  <div class="results-meta">
+    <div class="res-count">Showing <b id="res-n">6</b> verified companies</div>
+    <div class="sort-label">Sort: Relevance ▾</div>
+  </div>
+  <div class="result-list" id="result-list"></div>
+  <footer>
+    <div class="footer-left">partners.targetnxt.com · © 2026 TargetNXT</div>
+    <div class="footer-right"><div class="f-badge"><div class="f-dot"></div>Verified Data</div></div>
+  </footer>
+</div>
+
+<!-- COMPANY PROFILE -->
+<div class="page" id="page-profile">
+  <div class="breadcrumb">
+    <span class="crumb" onclick="go('home')">Home</span>
+    <span class="sep">/</span>
+    <span class="crumb" onclick="go('search')">Companies</span>
+    <span class="sep">/</span>
+    <span id="bc-name" style="color:var(--muted)">Profile</span>
+  </div>
+  <div class="profile-band">
+    <div class="ph-row">
+      <div class="ph-logo" id="p-logo">A</div>
+      <div class="ph-info">
+        <div class="ph-name" id="p-name">Acme SaaS Solutions Inc</div>
+        <div class="ph-tagline" id="p-tagline">B2B SaaS · Austin, TX, USA</div>
+        <div class="badges">
+          <span class="badge badge-g">✔ Verified Business</span>
+          <span class="badge badge-b">⚡ TechVerified</span>
+          <span class="badge badge-o" id="p-stage">Series B</span>
+        </div>
+      </div>
+      <button class="btn-cta" onclick="go('exec')">View Executive →</button>
+    </div>
+    <div class="kpi-strip">
+      <div class="kpi"><div class="kpi-val" id="p-emp">280</div><div class="kpi-lbl">Employees</div></div>
+      <div class="kpi"><div class="kpi-val" id="p-rev">$18M</div><div class="kpi-lbl">Est. Revenue</div></div>
+      <div class="kpi"><div class="kpi-val" id="p-yr">2015</div><div class="kpi-lbl">Founded</div></div>
+      <div class="kpi"><div class="kpi-val" id="p-st2">Series B</div><div class="kpi-lbl">Funding</div></div>
+      <div class="kpi"><div class="kpi-val">12</div><div class="kpi-lbl">Technologies</div></div>
+    </div>
+  </div>
+  <div class="profile-body">
+    <div class="info-card">
+      <div class="ic-head">Business Details</div>
+      <div class="ic-body">
+        <div class="ic-row"><span class="ic-key">Industry</span><span class="ic-val" id="d-ind">B2B SaaS / MarTech</span></div>
+        <div class="ic-row"><span class="ic-key">Headquarters</span><span class="ic-val" id="d-hq">Austin, TX, USA</span></div>
+        <div class="ic-row"><span class="ic-key">Business Type</span><span class="ic-val">Private Corporation</span></div>
+        <div class="ic-row"><span class="ic-key">Revenue Range</span><span class="ic-val red" id="d-rev">$10M – $25M</span></div>
+        <div class="ic-row"><span class="ic-key">Target Market</span><span class="ic-val" id="d-mkt">Mid-Market B2B</span></div>
+        <div class="ic-row"><span class="ic-key">Offices</span><span class="ic-val">Austin · NYC · London</span></div>
+        <div class="ic-row"><span class="ic-key">Website</span><span class="ic-val blue" id="d-web">acmesaas.com</span></div>
+      </div>
+    </div>
+    <div class="info-card">
+      <div class="ic-head">Technology Stack</div>
+      <div class="tech-cloud">
+        <span class="tech-pill">HubSpot CRM</span><span class="tech-pill">Salesforce</span>
+        <span class="tech-pill">Outreach</span><span class="tech-pill">ZoomInfo</span>
+        <span class="tech-pill">AWS</span><span class="tech-pill">Slack</span>
+        <span class="tech-pill">Segment</span><span class="tech-pill">Mixpanel</span>
+        <span class="tech-pill">Intercom</span><span class="tech-pill">Gong</span>
+        <span class="tech-pill">Notion</span><span class="tech-pill">Stripe</span>
+      </div>
+    </div>
+    <div class="info-card">
+      <div class="ic-head">Services &amp; Certifications</div>
+      <div class="ic-body">
+        <div class="ic-row"><span class="ic-key">Primary Service</span><span class="ic-val">Pipeline Automation</span></div>
+        <div class="ic-row"><span class="ic-key">Secondary</span><span class="ic-val">Revenue Intelligence</span></div>
+        <div class="ic-row"><span class="ic-key">Delivery</span><span class="ic-val red">SaaS Platform</span></div>
+        <div class="ic-row"><span class="ic-key">Certifications</span><span class="ic-val green">SOC 2 · ISO 27001</span></div>
+        <div class="ic-row"><span class="ic-key">GDPR Compliant</span><span class="ic-val green">Yes ✔</span></div>
+      </div>
+    </div>
+    <div class="info-card">
+      <div class="ic-head">Growth Signals</div>
+      <div class="ic-body">
+        <div class="ic-row"><span class="ic-key">Hiring Signal</span><span class="ic-val orange">↑ Actively Hiring</span></div>
+        <div class="ic-row"><span class="ic-key">Open Roles</span><span class="ic-val">18 Positions</span></div>
+        <div class="ic-row"><span class="ic-key">Web Traffic</span><span class="ic-val green">+34% QoQ</span></div>
+        <div class="ic-row"><span class="ic-key">Last Funding</span><span class="ic-val">Mar 2025 · $22M</span></div>
+        <div class="ic-row"><span class="ic-key">Intent Score</span><span class="ic-val red">87 / 100</span></div>
+      </div>
+    </div>
+  </div>
+  <footer>
+    <div class="footer-left">partners.targetnxt.com · © 2026 TargetNXT</div>
+    <div class="footer-right"><div class="f-badge"><div class="f-dot"></div>Verified Profile</div></div>
+  </footer>
+</div>
+
+<!-- EXEC PROFILE -->
+<div class="page" id="page-exec">
+  <div class="breadcrumb">
+    <span class="crumb" onclick="go('home')">Home</span>
+    <span class="sep">/</span>
+    <span class="crumb" onclick="go('search')">Leaders</span>
+    <span class="sep">/</span>
+    <span style="color:var(--muted)">Sarah Chen</span>
+  </div>
+  <div class="exec-band">
+    <div class="exec-top">
+      <div class="exec-av">SC</div>
+      <div>
+        <div class="exec-name">Sarah Chen</div>
+        <div class="exec-title">Chief Revenue Officer</div>
+        <div class="exec-co">🏢 <span onclick="go('profile')">Acme SaaS Solutions Inc</span> &nbsp;·&nbsp; 📍 Austin, TX, USA</div>
+        <div class="badges" style="margin-top:12px">
+          <span class="badge badge-g">✔ Verified Executive</span>
+          <span class="badge badge-b">⭐ Featured Leader</span>
+          <span class="badge badge-o">🎙 Podcast Guest</span>
+        </div>
+      </div>
+    </div>
+    <div class="kpi-strip">
+      <div class="kpi"><div class="kpi-val">14 yrs</div><div class="kpi-lbl">Experience</div></div>
+      <div class="kpi"><div class="kpi-val">$80M+</div><div class="kpi-lbl">Revenue Led</div></div>
+      <div class="kpi"><div class="kpi-val">3</div><div class="kpi-lbl">Podcasts</div></div>
+      <div class="kpi"><div class="kpi-val">12</div><div class="kpi-lbl">Speaking Events</div></div>
+      <div class="kpi"><div class="kpi-val">Top 50</div><div class="kpi-lbl">CRO Award 2025</div></div>
+    </div>
+  </div>
+  <div class="exec-body">
+    <div class="info-card">
+      <div class="ic-head">Strategic Focus Areas</div>
+      <div class="ic-body">
+        <div class="focus-li"><span class="focus-dot"></span>Enterprise revenue operations</div>
+        <div class="focus-li"><span class="focus-dot"></span>Go-to-market strategy design</div>
+        <div class="focus-li"><span class="focus-dot"></span>Sales &amp; marketing alignment</div>
+        <div class="focus-li"><span class="focus-dot"></span>Pipeline velocity optimisation</div>
+        <div class="focus-li"><span class="focus-dot"></span>AI-powered sales automation</div>
+        <div class="focus-li"><span class="focus-dot"></span>Customer success &amp; NRR growth</div>
+      </div>
+    </div>
+    <div class="info-card">
+      <div class="ic-head">Technologies Managed</div>
+      <div class="tech-cloud">
+        <span class="tech-pill">Salesforce</span><span class="tech-pill">HubSpot</span>
+        <span class="tech-pill">Gong</span><span class="tech-pill">Outreach</span>
+        <span class="tech-pill">Clari</span><span class="tech-pill">ZoomInfo</span>
+        <span class="tech-pill">Chorus</span><span class="tech-pill">Drift</span>
+      </div>
+    </div>
+    <div class="info-card">
+      <div class="ic-head">Thought Leadership &amp; Activity</div>
+      <div class="ic-body">
+        <div class="act-item"><div class="act-dot" style="background:var(--green)"></div><div><div class="act-text">Spoke at SaaStr Annual 2025 — "Scaling Revenue with AI-Driven Ops"</div><div class="act-time">Nov 2025</div></div></div>
+        <div class="act-item"><div class="act-dot" style="background:var(--blue)"></div><div><div class="act-text">Published: "The Modern CRO Playbook for 2026"</div><div class="act-time">Jan 2026</div></div></div>
+        <div class="act-item"><div class="act-dot" style="background:var(--red)"></div><div><div class="act-text">Guest on Revenue Collective Podcast — Episode 214</div><div class="act-time">Mar 2026</div></div></div>
+        <div class="act-item"><div class="act-dot" style="background:var(--amber)"></div><div><div class="act-text">Named in Forbes "Top 50 CROs Shaping B2B 2025"</div><div class="act-time">Dec 2025</div></div></div>
+      </div>
+    </div>
+    <div class="info-card">
+      <div class="ic-head">Professional Background</div>
+      <div class="ic-body">
+        <div class="ic-row"><span class="ic-key">Previous Role</span><span class="ic-val">VP Sales · Gartner</span></div>
+        <div class="ic-row"><span class="ic-key">Education</span><span class="ic-val">MBA, Wharton School</span></div>
+        <div class="ic-row"><span class="ic-key">Industry</span><span class="ic-val">B2B SaaS · Revenue Ops</span></div>
+        <div class="ic-row"><span class="ic-key">Award</span><span class="ic-val red">Top 50 CROs 2025</span></div>
+        <div class="ic-row"><span class="ic-key">LinkedIn</span><span class="ic-val blue">linkedin.com/in/schen</span></div>
+      </div>
+    </div>
+  </div>
+  <footer>
+    <div class="footer-left">partners.targetnxt.com · © 2026 TargetNXT</div>
+    <div class="footer-right"><div class="f-badge"><div class="f-dot"></div>Verified Executive</div></div>
+  </footer>
+</div>
+
+<!-- CRITERIA -->
+<div class="page" id="page-criteria">
+  <div class="page-hero">
+    <h1>Business <span class="accent">Acceptance Policy</span></h1>
+    <p>Only legitimate, verified B2B companies may be listed on partners.targetnxt.com. We maintain strict quality and anti-spam standards across every submission.</p>
+  </div>
+  <div class="section">
+    <div class="warning-bar">
+      <span class="wi">🚫</span>
+      <span><strong>Strictly Prohibited:</strong> Cryptocurrency · Blockchain · Online Casino · Gambling · Stock Trading · Forex Trading · Adult Content · Payday Loans · Pyramid Schemes · MLM · Any deceptive or spam business. Violations result in permanent ban.</span>
+    </div>
+    <div class="sec-hdr">
+      <div><div class="sec-eyebrow">Not Accepted</div><div class="sec-title">Prohibited <span>Categories</span></div></div>
+    </div>
+    <div class="crit-grid" style="margin-bottom:36px">
+      <div class="crit-card ban"><div class="crit-card-head"><span class="icon">🪙</span><span class="label">Cryptocurrency &amp; Blockchain</span></div><div class="crit-card-body">ICO promotions, crypto trading platforms, NFT marketplaces, DeFi schemes, and all blockchain-based financial products.</div></div>
+      <div class="crit-card ban"><div class="crit-card-head"><span class="icon">📈</span><span class="label">Stock &amp; Forex Trading</span></div><div class="crit-card-body">Retail trading platforms, penny-stock promoters, unregulated investment advisors, signal-selling services.</div></div>
+      <div class="crit-card ban"><div class="crit-card-head"><span class="icon">🎰</span><span class="label">Online Casino &amp; Gambling</span></div><div class="crit-card-body">Online casinos, sports betting sites, poker rooms, lottery services, and all forms of real-money gambling.</div></div>
+      <div class="crit-card ban"><div class="crit-card-head"><span class="icon">🔞</span><span class="label">Adult Content</span></div><div class="crit-card-body">Adult entertainment websites, adult product retailers, or any content inappropriate for a professional B2B audience.</div></div>
+      <div class="crit-card ban"><div class="crit-card-head"><span class="icon">💸</span><span class="label">Payday &amp; Predatory Finance</span></div><div class="crit-card-body">High-interest lenders, loan sharks, unregulated debt collection, and predatory financial service providers.</div></div>
+      <div class="crit-card ban"><div class="crit-card-head"><span class="icon">🔺</span><span class="label">MLM &amp; Pyramid Schemes</span></div><div class="crit-card-body">Multi-level marketing with no verifiable product, recruitment-only income models, and chain-referral schemes.</div></div>
+    </div>
+    <div class="sec-hdr">
+      <div><div class="sec-eyebrow">Requirements</div><div class="sec-title">Verification <span>Standards</span></div></div>
+    </div>
+    <div class="crit-grid">
+      <div class="crit-card ok"><div class="crit-card-head"><span class="icon">✅</span><span class="label">Corporate Email Required</span></div><div class="crit-card-body">Only corporate domain emails accepted (e.g. john@company.com). Gmail, Yahoo, Outlook, Hotmail, and all free/disposable addresses are automatically rejected.</div></div>
+      <div class="crit-card ok"><div class="crit-card-head"><span class="icon">🔍</span><span class="label">MX &amp; SMTP Verification</span></div><div class="crit-card-body">All submissions validated via MX record check, SMTP handshake, domain age verification, and spam-trap screening.</div></div>
+      <div class="crit-card ok"><div class="crit-card-head"><span class="icon">🛡️</span><span class="label">AI Anti-Spam Filter</span></div><div class="crit-card-body">Machine learning spam detection, duplicate business screening, and role-based email rejection before manual review.</div></div>
+      <div class="crit-card ok"><div class="crit-card-head"><span class="icon">📋</span><span class="label">5-Step Approval Workflow</span></div><div class="crit-card-body">Email verify → Domain validate → AI spam check → Manual moderation → Editorial approval before any listing goes live.</div></div>
+    </div>
+  </div>
+  <footer>
+    <div class="footer-left">partners.targetnxt.com · © 2026 TargetNXT. All rights reserved.</div>
+    <div class="footer-right"><div class="f-badge"><div class="f-dot"></div>Zero Tolerance Policy</div></div>
+  </footer>
+</div>
+
+<script>
+const companies = [
+  {id:1,name:"Acme SaaS Solutions",  short:"A",bg:"#193441",ind:"B2B SaaS",      hq:"Austin, TX",       emp:"250–500", rev:"$18M",stage:"Series B", tags:["HubSpot","Salesforce","Fast-Growing"]},
+  {id:2,name:"PipelinePro Tech",     short:"P",bg:"#7c3aed",ind:"MarTech",       hq:"San Francisco, CA",emp:"100–250", rev:"$9M", stage:"Series A", tags:["HubSpot","Marketo","AI-Powered"]},
+  {id:3,name:"DataBridge Corp",      short:"D",bg:"#0891b2",ind:"Data Analytics",hq:"Chicago, IL",       emp:"500–1000",rev:"$42M",stage:"Series C", tags:["Tableau","Snowflake","Enterprise"]},
+  {id:4,name:"NexGen Revenue",       short:"N",bg:"#11612e",ind:"Revenue Ops",   hq:"New York, NY",     emp:"50–100",  rev:"$5M", stage:"Series A", tags:["Gong","Outreach","Startup"]},
+  {id:5,name:"ClearSignal Analytics",short:"C",bg:"#f7630c",ind:"Business Intel",hq:"Boston, MA",       emp:"200–500", rev:"$24M",stage:"Series B", tags:["Looker","BigQuery","BI"]},
+  {id:6,name:"LeadForge Systems",    short:"L",bg:"#f91e1e",ind:"Demand Gen",    hq:"Seattle, WA",      emp:"30–80",   rev:"$3M", stage:"Seed",     tags:["HubSpot","LinkedIn Ads","B2B"]},
+];
+
+function go(page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-link').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-' + page).classList.add('active');
+  const nl = document.getElementById('nl-' + page);
+  if (nl) nl.classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+function card(c) {
+  return `<div class="c-card" onclick="openProfile(${c.id})">
+    <div class="c-card-top">
+      <div class="c-logo" style="background:${c.bg}">${c.short}</div>
+      <div><div class="c-name">${c.name}</div><div class="c-ind">${c.ind} · ${c.hq}</div></div>
+    </div>
+    <div class="c-tags">
+      ${c.tags.map(t=>`<span class="tag tag-red">${t}</span>`).join('')}
+      <span class="tag tag-green">✔ Verified</span>
+      <span class="tag tag-navy">${c.stage}</span>
+    </div>
+    <div class="verified-row">✔ Verified Business &nbsp;·&nbsp; ${c.emp} employees</div>
+  </div>`;
+}
+
+function row(c) {
+  return `<div class="r-row" onclick="openProfile(${c.id})">
+    <div class="r-logo" style="background:${c.bg}">${c.short}</div>
+    <div class="r-main">
+      <div class="r-name">${c.name} <span class="tag tag-green" style="font-size:10px">✔ Verified</span></div>
+      <div class="r-meta">${c.ind} · ${c.hq} · Founded ${2010+c.id}</div>
+      <div class="c-tags">
+        ${c.tags.map(t=>`<span class="tag tag-red">${t}</span>`).join('')}
+        <span class="tag tag-blue">${c.stage}</span>
+      </div>
+    </div>
+    <div class="r-side">
+      <div class="r-emp-num">${c.emp}</div><div class="r-emp-lbl">Employees</div>
+      <div class="r-score">Score 92</div>
+    </div>
+  </div>`;
+}
+
+function doSearch() {
+  const q = (document.getElementById('sq').value || '').toLowerCase();
+  const list = q ? companies.filter(c =>
+    c.name.toLowerCase().includes(q) ||
+    c.ind.toLowerCase().includes(q) ||
+    c.tags.some(t => t.toLowerCase().includes(q))
+  ) : companies;
+  document.getElementById('res-n').textContent = list.length;
+  document.getElementById('result-list').innerHTML = list.map(row).join('');
+}
+
+function openProfile(id) {
+  const c = companies.find(x => x.id === id);
+  if (!c) return;
+  document.getElementById('bc-name').textContent = c.name;
+  document.getElementById('p-logo').textContent = c.short;
+  document.getElementById('p-logo').style.background = c.bg;
+  document.getElementById('p-name').textContent = c.name;
+  document.getElementById('p-tagline').textContent = c.ind + ' · ' + c.hq;
+  document.getElementById('p-stage').textContent = c.stage;
+  document.getElementById('p-st2').textContent = c.stage;
+  document.getElementById('p-emp').textContent = c.emp;
+  document.getElementById('p-rev').textContent = c.rev;
+  document.getElementById('d-ind').textContent = c.ind;
+  document.getElementById('d-hq').textContent = c.hq;
+  document.getElementById('d-rev').textContent = c.rev;
+  go('profile');
+}
+
+function toggleChip(el) { el.classList.toggle('on'); }
+
+document.getElementById('home-grid').innerHTML = companies.slice(0,4).map(card).join('');
+doSearch();
+</script>
+</body>
+</html>
