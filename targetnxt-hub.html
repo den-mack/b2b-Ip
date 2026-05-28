@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>TargetNXT — B2B Market Intelligence Hub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+<style>
+  /* ── Reset & Base ──────────────────────────────────────── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg:          #090f1a;
+    --bg-nav:      #0b1423;
+    --surface:     #101d30;
+    --surface-2:   #14243e;
+    --card:        #162947;
+    --card-hover:  #1a3254;
+    --border:      rgba(255,255,255,0.07);
+    --border-hi:   rgba(255,107,0,0.35);
+    --orange:      #FF6B00;
+    --orange-2:    #ff8533;
+    --orange-dim:  rgba(255,107,0,0.10);
+    --orange-glow: rgba(255,107,0,0.18);
+    --text:        #e8f0fb;
+    --muted:       #7a9cbe;
+    --faint:       #3a5a7a;
+    --green:       #1fcd74;
+    --green-dim:   rgba(31,205,116,0.10);
+    --blue:        #3b9eff;
+    --blue-dim:    rgba(59,158,255,0.10);
+    --red:         #f05c5c;
+    --red-dim:     rgba(240,92,92,0.10);
+    --amber:       #f5a623;
+    --radius-sm:   6px;
+    --radius-md:   10px;
+    --radius-lg:   14px;
+    --radius-xl:   20px;
+    --font-head:   'Syne', sans-serif;
+    --font-body:   'DM Sans', sans-serif;
+    --nav-h:       60px;
+    --trans:       0.18s ease;
+  }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg); color: var(--text);
+    font-family: var(--font-body); font-size: 15px;
+    line-height: 1.6; min-height: 100vh; overflow-x: hidden;
+  }
+  a { color: inherit; text-decoration: none; }
+  button { font-family: var(--font-body); cursor: pointer; border: none; }
+
+  /* ── Page Router ───────────────────────────────────────── */
+  .page { display: none; min-height: 100vh; }
+  .page.active { display: block; }
+
+  /* ── Scrollbar ─────────────────────────────────────────── */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--faint); border-radius: 3px; }
+
+  /* ── Noise overlay ─────────────────────────────────────── */
+  body::before {
+    content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+    opacity: 0.4;
+  }
+
+  /* ── NAV ───────────────────────────────────────────────── */
+  nav {
+    position: sticky; top: 0; z-index: 100; height: var(--nav-h);
+    background: rgba(11,20,35,0.92); backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 28px; gap: 20px;
+  }
+  .nav-logo {
+    display: flex; align-items: center; gap: 10px; cursor: pointer;
+    flex-shrink: 0;
+  }
+  .logo-icon {
+    width: 32px; height: 32px; background: var(--orange); border-radius: var(--radius-sm);
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-head); font-weight: 700; font-size: 16px; color: #fff;
+    box-shadow: 0 0 14px var(--orange-glow);
+  }
+  .logo-text {
+    font-family: var(--font-head); font-weight: 600; font-size: 16px; color: var(--text);
+  }
+  .logo-text em { color: var(--orange); font-style: normal; }
+  .nav-links { display: flex; gap: 4px; }
+  .nav-link {
+    padding: 6px 12px; border-radius: var(--radius-sm);
+    font-size: 13px; color: var(--muted); transition: var(--trans);
+    cursor: pointer;
+  }
+  .nav-link:hover, .nav-link.active { color: var(--text); background: var(--surface); }
+  .nav-right { display: flex; gap: 10px; align-items: center; }
+  .btn-ghost {
+    padding: 7px 16px; border-radius: var(--radius-sm);
+    font-size: 13px; color: var(--muted); background: transparent;
+    border: 1px solid var(--border); transition: var(--trans);
+  }
+  .btn-ghost:hover { color: var(--text); border-color: var(--border-hi); }
+  .btn-primary {
+    padding: 8px 18px; border-radius: var(--radius-sm);
+    font-size: 13px; font-weight: 500; color: #fff;
+    background: var(--orange); transition: var(--trans);
+    box-shadow: 0 0 12px var(--orange-glow);
+  }
+  .btn-primary:hover { background: var(--orange-2); box-shadow: 0 0 20px var(--orange-glow); }
+
+  /* ── Hero ──────────────────────────────────────────────── */
+  .hero {
+    padding: 80px 28px 60px; text-align: center; position: relative;
+    overflow: hidden;
+  }
+  .hero-glow {
+    position: absolute; top: -100px; left: 50%; transform: translateX(-50%);
+    width: 700px; height: 400px; border-radius: 50%;
+    background: radial-gradient(ellipse, rgba(255,107,0,0.08) 0%, transparent 65%);
+    pointer-events: none;
+  }
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 7px;
+    background: var(--orange-dim); border: 1px solid var(--border-hi);
+    border-radius: 20px; padding: 5px 14px;
+    font-size: 12px; font-weight: 500; color: var(--orange-2);
+    margin-bottom: 24px; position: relative;
+  }
+  .pulse { width: 7px; height: 7px; border-radius: 50%; background: var(--green); display: inline-block; animation: pulse 1.8s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(0.85)} }
+  .hero h1 {
+    font-family: var(--font-head); font-size: clamp(32px, 5vw, 52px);
+    font-weight: 700; line-height: 1.15; color: var(--text);
+    margin-bottom: 18px; position: relative;
+  }
+  .hero h1 .accent { color: var(--orange); }
+  .hero p {
+    font-size: 16px; color: var(--muted); max-width: 540px;
+    margin: 0 auto 32px; line-height: 1.7; position: relative;
+  }
+  /* Search bar */
+  .hero-search {
+    max-width: 580px; margin: 0 auto 36px; position: relative;
+    display: flex; background: var(--surface-2);
+    border: 1px solid var(--border); border-radius: var(--radius-lg);
+    overflow: hidden; transition: border-color var(--trans);
+  }
+  .hero-search:focus-within { border-color: var(--border-hi); box-shadow: 0 0 0 3px var(--orange-dim); }
+  .search-icon {
+    padding: 0 14px; display: flex; align-items: center;
+    color: var(--faint); font-size: 18px; flex-shrink: 0;
+  }
+  .hero-search input {
+    flex: 1; background: transparent; border: none; outline: none;
+    padding: 14px 0; font-size: 14px; color: var(--text); font-family: var(--font-body);
+  }
+  .hero-search input::placeholder { color: var(--faint); }
+  .search-btn {
+    margin: 6px; padding: 8px 20px; background: var(--orange);
+    border-radius: var(--radius-md); font-size: 13px; font-weight: 500; color: #fff;
+    transition: var(--trans); white-space: nowrap;
+  }
+  .search-btn:hover { background: var(--orange-2); }
+  /* Stats */
+  .hero-stats {
+    display: flex; justify-content: center; gap: 40px;
+    flex-wrap: wrap; position: relative;
+  }
+  .hstat { text-align: center; }
+  .hstat-num { font-family: var(--font-head); font-size: 28px; font-weight: 700; color: var(--orange); }
+  .hstat-lbl { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+  /* ── Section ───────────────────────────────────────────── */
+  .section { padding: 40px 28px; }
+  .section-hdr {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 20px;
+  }
+  .section-title { font-family: var(--font-head); font-size: 18px; font-weight: 600; color: var(--text); }
+  .section-link { font-size: 13px; color: var(--orange); cursor: pointer; transition: var(--trans); }
+  .section-link:hover { color: var(--orange-2); }
+
+  /* ── Company Cards ─────────────────────────────────────── */
+  .company-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 14px;
+  }
+  .c-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: var(--radius-lg); padding: 18px;
+    transition: var(--trans); cursor: pointer;
+  }
+  .c-card:hover { background: var(--card-hover); border-color: var(--border-hi); transform: translateY(-2px); }
+  .cc-head { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+  .cc-logo {
+    width: 42px; height: 42px; border-radius: var(--radius-sm);
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-head); font-size: 18px; font-weight: 700; color: #fff;
+    flex-shrink: 0;
+  }
+  .cc-name { font-family: var(--font-head); font-size: 14px; font-weight: 600; color: var(--text); line-height: 1.3; }
+  .cc-sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
+  .cc-tags { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 10px; }
+  .tag {
+    font-size: 10px; font-weight: 500; padding: 2px 8px; border-radius: 4px;
+    background: rgba(255,255,255,0.05); color: var(--muted); border: 1px solid var(--border);
+  }
+  .tag-orange { background: var(--orange-dim); color: var(--orange-2); border-color: rgba(255,107,0,0.2); }
+  .tag-green  { background: var(--green-dim);  color: var(--green);   border-color: rgba(31,205,116,0.2); }
+  .tag-blue   { background: var(--blue-dim);   color: var(--blue);    border-color: rgba(59,158,255,0.2); }
+  .tag-red    { background: var(--red-dim);    color: var(--red);     border-color: rgba(240,92,92,0.2); }
+  .verified-badge {
+    display: inline-flex; align-items: center; gap: 5px;
+    font-size: 11px; color: var(--green);
+  }
+
+  /* ── Industries strip ──────────────────────────────────── */
+  .industry-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; }
+  .industry-card {
+    background: var(--surface-2); border: 1px solid var(--border);
+    border-radius: var(--radius-md); padding: 14px 12px;
+    text-align: center; cursor: pointer; transition: var(--trans);
+  }
+  .industry-card:hover { border-color: var(--border-hi); background: var(--card); }
+  .ind-icon { font-size: 22px; margin-bottom: 6px; }
+  .ind-name { font-size: 12px; font-weight: 500; color: var(--text); }
+  .ind-count { font-size: 10px; color: var(--muted); margin-top: 2px; }
+
+  /* ── SEARCH PAGE ───────────────────────────────────────── */
+  .search-bar-wrap {
+    background: var(--surface); border-bottom: 1px solid var(--border);
+    padding: 16px 28px;
+  }
+  .search-controls { display: flex; gap: 10px; margin-bottom: 12px; align-items: center; }
+  .search-field {
+    flex: 1; display: flex; align-items: center; gap: 10px;
+    background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-md);
+    padding: 10px 14px;
+  }
+  .search-field:focus-within { border-color: var(--border-hi); }
+  .search-field input {
+    flex: 1; background: none; border: none; outline: none;
+    color: var(--text); font-size: 14px; font-family: var(--font-body);
+  }
+  .search-field input::placeholder { color: var(--faint); }
+  .filter-bar { display: flex; gap: 7px; flex-wrap: wrap; }
+  .filter-chip {
+    font-size: 12px; padding: 5px 12px; border-radius: var(--radius-sm);
+    border: 1px solid var(--border); color: var(--muted);
+    background: transparent; cursor: pointer; transition: var(--trans);
+  }
+  .filter-chip:hover { border-color: rgba(255,255,255,0.15); color: var(--text); }
+  .filter-chip.on { background: var(--orange-dim); border-color: var(--border-hi); color: var(--orange-2); }
+  .results-bar {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 12px 28px; border-bottom: 1px solid var(--border);
+  }
+  .res-count { font-size: 13px; color: var(--muted); }
+  .res-count b { color: var(--orange); }
+  .res-sort { font-size: 12px; color: var(--muted); cursor: pointer; }
+  .result-list-wrap { padding: 16px 28px; display: flex; flex-direction: column; gap: 10px; }
+  .r-row {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: var(--radius-lg); padding: 16px 18px;
+    display: flex; gap: 16px; align-items: center; cursor: pointer;
+    transition: var(--trans);
+  }
+  .r-row:hover { background: var(--card-hover); border-color: var(--border-hi); }
+  .r-logo {
+    width: 46px; height: 46px; border-radius: var(--radius-md);
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-head); font-size: 18px; font-weight: 700; color: #fff; flex-shrink: 0;
+  }
+  .r-main { flex: 1; min-width: 0; }
+  .r-name { font-family: var(--font-head); font-size: 14px; font-weight: 600; color: var(--text); display: flex; align-items: center; gap: 6px; }
+  .r-meta { font-size: 12px; color: var(--muted); margin: 2px 0 6px; }
+  .r-side { text-align: right; flex-shrink: 0; }
+  .r-emp { font-family: var(--font-head); font-size: 14px; font-weight: 600; color: var(--text); }
+  .r-emp-lbl { font-size: 10px; color: var(--muted); }
+  .r-score { font-size: 11px; color: var(--green); margin-top: 4px; }
+
+  /* ── COMPANY PROFILE PAGE ──────────────────────────────── */
+  .profile-header {
+    background: var(--surface); border-bottom: 1px solid var(--border); padding: 28px 28px 0;
+  }
+  .breadcrumb { font-size: 12px; color: var(--muted); margin-bottom: 20px; display: flex; gap: 6px; align-items: center; }
+  .breadcrumb span { color: var(--orange); cursor: pointer; }
+  .ph-row { display: flex; gap: 20px; align-items: flex-start; margin-bottom: 20px; }
+  .ph-logo {
+    width: 68px; height: 68px; border-radius: var(--radius-lg);
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-head); font-size: 26px; font-weight: 700;
+    color: #fff; flex-shrink: 0; border: 2px solid rgba(255,255,255,0.1);
+  }
+  .ph-info { flex: 1; }
+  .ph-name { font-family: var(--font-head); font-size: 24px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+  .ph-tagline { font-size: 13px; color: var(--muted); margin-bottom: 12px; }
+  .badge-row { display: flex; gap: 7px; flex-wrap: wrap; }
+  .badge {
+    display: inline-flex; align-items: center; gap: 5px;
+    font-size: 11px; font-weight: 500; padding: 4px 10px; border-radius: 5px;
+  }
+  .badge-v { background: var(--green-dim); color: var(--green); }
+  .badge-b { background: var(--blue-dim); color: var(--blue); }
+  .badge-o { background: var(--orange-dim); color: var(--orange-2); }
+  .stats-strip {
+    display: flex; border-top: 1px solid var(--border); margin: 0 -28px;
+  }
+  .stat-block {
+    flex: 1; padding: 16px 20px; text-align: center;
+    border-right: 1px solid var(--border);
+  }
+  .stat-block:last-child { border-right: none; }
+  .sb-val { font-family: var(--font-head); font-size: 18px; font-weight: 700; color: var(--orange); }
+  .sb-lbl { font-size: 10px; color: var(--muted); margin-top: 2px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .profile-body { padding: 24px 28px; display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .info-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: var(--radius-lg); padding: 18px; overflow: hidden;
+  }
+  .info-card-title {
+    font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px;
+    color: var(--faint); margin-bottom: 14px; padding-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+  }
+  .info-row {
+    display: flex; justify-content: space-between; align-items: flex-start;
+    padding: 7px 0; border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+  .info-row:last-child { border-bottom: none; }
+  .ir-key { font-size: 12px; color: var(--muted); flex-shrink: 0; }
+  .ir-val { font-size: 12px; color: var(--text); font-weight: 500; text-align: right; max-width: 200px; }
+  .ir-val.orange { color: var(--orange-2); }
+  .ir-val.green  { color: var(--green); }
+  .ir-val.blue   { color: var(--blue); }
+  .tech-cloud { display: flex; flex-wrap: wrap; gap: 6px; }
+  .tech-pill {
+    font-size: 11px; padding: 4px 10px; border-radius: 5px;
+    background: var(--blue-dim); color: var(--blue);
+    border: 1px solid rgba(59,158,255,0.2);
+  }
+
+  /* ── EXECUTIVE PROFILE PAGE ────────────────────────────── */
+  .exec-header {
+    background: var(--surface); border-bottom: 1px solid var(--border); padding: 28px 28px 0;
+  }
+  .exec-row { display: flex; gap: 20px; align-items: flex-start; margin-bottom: 20px; }
+  .exec-avatar {
+    width: 76px; height: 76px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-head); font-size: 26px; font-weight: 700; color: #fff;
+    flex-shrink: 0; background: var(--surface-2);
+    border: 2px solid var(--orange); box-shadow: 0 0 18px var(--orange-glow);
+  }
+  .exec-name { font-family: var(--font-head); font-size: 24px; font-weight: 700; color: var(--text); margin-bottom: 3px; }
+  .exec-title { font-size: 14px; color: var(--orange-2); margin-bottom: 4px; }
+  .exec-company { font-size: 13px; color: var(--muted); display: flex; align-items: center; gap: 6px; }
+  .exec-body { padding: 24px 28px; display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .activity-item { display: flex; gap: 12px; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.04); }
+  .activity-item:last-child { border-bottom: none; }
+  .act-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 6px; }
+  .act-body { flex: 1; }
+  .act-text { font-size: 12px; color: var(--text); line-height: 1.5; }
+  .act-time { font-size: 11px; color: var(--faint); margin-top: 3px; }
+  .focus-item {
+    display: flex; align-items: center; gap: 8px;
+    padding: 7px 0; border-bottom: 1px solid rgba(255,255,255,0.04);
+    font-size: 12px; color: var(--muted);
+  }
+  .focus-item:last-child { border-bottom: none; }
+  .focus-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--orange); flex-shrink: 0; }
+
+  /* ── FOOTER ────────────────────────────────────────────── */
+  footer {
+    background: var(--bg-nav); border-top: 1px solid var(--border);
+    padding: 14px 28px; display: flex; justify-content: space-between;
+    align-items: center; flex-wrap: wrap; gap: 8px;
+  }
+  .footer-left { font-size: 12px; color: var(--faint); }
+  .footer-right {
+    font-size: 11px; color: var(--green);
+    display: flex; align-items: center; gap: 6px;
+  }
+  .footer-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); }
+
+  /* ── Misc ──────────────────────────────────────────────── */
+  .divider { height: 1px; background: var(--border); margin: 0 28px; }
+  .no-spam-bar {
+    background: var(--red-dim); border: 1px solid rgba(240,92,92,0.2);
+    border-radius: var(--radius-md); padding: 10px 16px;
+    display: flex; align-items: center; gap: 10px;
+    font-size: 12px; color: #f5a0a0; margin: 0 28px 24px;
+  }
+  .no-spam-label { font-weight: 600; color: var(--red); margin-right: 4px; }
+  .criteria-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; }
+  .criteria-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: var(--radius-lg); padding: 16px; border-left: 3px solid;
+  }
+  .criteria-card.prohibited { border-left-color: var(--red); }
+  .criteria-card.required  { border-left-color: var(--green); }
+  .crit-head { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+  .crit-icon { font-size: 18px; }
+  .crit-title { font-size: 13px; font-weight: 600; }
+  .crit-title.red { color: var(--red); }
+  .crit-title.green { color: var(--green); }
+  .crit-desc { font-size: 12px; color: var(--muted); line-height: 1.5; }
+
+  /* ── Animations ────────────────────────────────────────── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .page.active { animation: fadeUp 0.3s ease; }
+  .c-card, .r-row, .info-card, .industry-card {
+    animation: fadeUp 0.4s ease both;
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════ NAV ══════════════════════════════ -->
+<nav>
+  <div class="nav-logo" onclick="goTo('home')">
+    <div class="logo-icon">T</div>
+    <div class="logo-text">Target<em>NXT</em> Intelligence</div>
+  </div>
+  <div class="nav-links">
+    <div class="nav-link" id="nl-home" onclick="goTo('home')">Home</div>
+    <div class="nav-link" id="nl-search" onclick="goTo('search')">Companies</div>
+    <div class="nav-link" id="nl-criteria" onclick="goTo('criteria')">Criteria</div>
+  </div>
+  <div class="nav-right">
+    <button class="btn-ghost">Sign In</button>
+    <button class="btn-primary" onclick="goTo('search')">Submit Company</button>
+  </div>
+</nav>
+
+<!-- ═══════════════════════ PAGE: HOME ═══════════════════════════════ -->
+<div class="page active" id="page-home">
+  <div class="hero">
+    <div class="hero-glow"></div>
+    <div class="hero-badge"><span class="pulse"></span>B2B Intelligence Hub — partners.targetnxt.com</div>
+    <h1>Discover the companies &amp; leaders<br>driving <span class="accent">modern B2B growth</span></h1>
+    <p>Verified firmographic intelligence, executive profiles, technographic insights, and market signals — all in one platform.</p>
+    <div class="hero-search">
+      <div class="search-icon">&#128269;</div>
+      <input type="text" id="hero-q" placeholder="Search companies, industries, technologies, leaders…" onkeydown="if(event.key==='Enter')goTo('search')" />
+      <button class="search-btn" onclick="goTo('search')">Search</button>
+    </div>
+    <div class="hero-stats">
+      <div class="hstat"><div class="hstat-num">48K+</div><div class="hstat-lbl">Verified Companies</div></div>
+      <div class="hstat"><div class="hstat-num">120K+</div><div class="hstat-lbl">Executive Profiles</div></div>
+      <div class="hstat"><div class="hstat-num">380+</div><div class="hstat-lbl">Industries Covered</div></div>
+      <div class="hstat"><div class="hstat-num">99%</div><div class="hstat-lbl">Data Accuracy</div></div>
+    </div>
+  </div>
+
+  <!-- Featured Companies -->
+  <div class="section">
+    <div class="section-hdr">
+      <div class="section-title">Featured Verified Companies</div>
+      <span class="section-link" onclick="goTo('search')">View all companies →</span>
+    </div>
+    <div class="company-grid" id="featured-grid"></div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Industries -->
+  <div class="section">
+    <div class="section-hdr">
+      <div class="section-title">Browse by Industry</div>
+      <span class="section-link" onclick="goTo('search')">All industries →</span>
+    </div>
+    <div class="industry-grid">
+      <div class="industry-card"><div class="ind-icon">💻</div><div class="ind-name">SaaS &amp; Software</div><div class="ind-count">8,412 companies</div></div>
+      <div class="industry-card"><div class="ind-icon">🏥</div><div class="ind-name">Healthcare</div><div class="ind-count">5,290 companies</div></div>
+      <div class="industry-card"><div class="ind-icon">🏭</div><div class="ind-name">Manufacturing</div><div class="ind-count">4,870 companies</div></div>
+      <div class="industry-card"><div class="ind-icon">🛒</div><div class="ind-name">E-Commerce</div><div class="ind-count">3,650 companies</div></div>
+      <div class="industry-card"><div class="ind-icon">📊</div><div class="ind-name">FinTech</div><div class="ind-count">3,120 companies</div></div>
+      <div class="industry-card"><div class="ind-icon">📡</div><div class="ind-name">MarTech</div><div class="ind-count">2,880 companies</div></div>
+      <div class="industry-card"><div class="ind-icon">🚛</div><div class="ind-name">Logistics</div><div class="ind-count">2,400 companies</div></div>
+      <div class="industry-card"><div class="ind-icon">🎓</div><div class="ind-name">EdTech</div><div class="ind-count">1,760 companies</div></div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-left">partners.targetnxt.com &nbsp;·&nbsp; © 2026 TargetNXT. All rights reserved.</div>
+    <div class="footer-right"><div class="footer-dot"></div>Spam-free · No Crypto · No Casino · No Stocks</div>
+  </footer>
+</div>
+
+<!-- ═══════════════════════ PAGE: SEARCH ═════════════════════════════ -->
+<div class="page" id="page-search">
+  <div class="search-bar-wrap">
+    <div class="search-controls">
+      <div class="search-field">
+        <span style="color:var(--faint)">&#128269;</span>
+        <input type="text" id="search-q" placeholder="Search companies, industries, technologies…" />
+      </div>
+      <button class="btn-primary" onclick="doSearch()">Search</button>
+    </div>
+    <div class="filter-bar">
+      <button class="filter-chip on" onclick="toggleChip(this)">All</button>
+      <button class="filter-chip on" onclick="toggleChip(this)">SaaS</button>
+      <button class="filter-chip"    onclick="toggleChip(this)">Healthcare</button>
+      <button class="filter-chip"    onclick="toggleChip(this)">FinTech</button>
+      <button class="filter-chip"    onclick="toggleChip(this)">Manufacturing</button>
+      <button class="filter-chip on" onclick="toggleChip(this)">USA</button>
+      <button class="filter-chip"    onclick="toggleChip(this)">UK</button>
+      <button class="filter-chip on" onclick="toggleChip(this)">Verified Only</button>
+      <button class="filter-chip"    onclick="toggleChip(this)">1–500 Employees</button>
+      <button class="filter-chip"    onclick="toggleChip(this)">Series A–C</button>
+    </div>
+  </div>
+  <div class="results-bar">
+    <div class="res-count">Showing <b id="res-cnt">6</b> verified companies</div>
+    <div class="res-sort">Sort: Relevance ▾</div>
+  </div>
+  <div class="result-list-wrap" id="result-list"></div>
+  <footer>
+    <div class="footer-left">partners.targetnxt.com &nbsp;·&nbsp; © 2026 TargetNXT</div>
+    <div class="footer-right"><div class="footer-dot"></div>Spam-free · No Crypto · No Casino · No Stocks</div>
+  </footer>
+</div>
+
+<!-- ═══════════════════════ PAGE: COMPANY PROFILE ════════════════════ -->
+<div class="page" id="page-profile">
+  <div class="profile-header">
+    <div class="breadcrumb">
+      <span onclick="goTo('home')">Home</span> / <span onclick="goTo('search')">Companies</span> / <span id="bc-name" style="color:var(--muted)">Acme SaaS Solutions</span>
+    </div>
+    <div class="ph-row">
+      <div class="ph-logo" id="p-logo" style="background:#FF6B00">A</div>
+      <div class="ph-info">
+        <div class="ph-name" id="p-name">Acme SaaS Solutions Inc</div>
+        <div class="ph-tagline" id="p-tagline">B2B Revenue Intelligence & Pipeline Automation · Austin, TX</div>
+        <div class="badge-row">
+          <span class="badge badge-v">✔ Verified Business</span>
+          <span class="badge badge-b">⚡ TechVerified</span>
+          <span class="badge badge-o" id="p-stage">Series B</span>
+        </div>
+      </div>
+      <button class="btn-primary" onclick="goTo('exec')">View Executive Profile →</button>
+    </div>
+    <div class="stats-strip">
+      <div class="stat-block"><div class="sb-val" id="p-emp">280</div><div class="sb-lbl">Employees</div></div>
+      <div class="stat-block"><div class="sb-val" id="p-rev">$18M</div><div class="sb-lbl">Est. Revenue</div></div>
+      <div class="stat-block"><div class="sb-val" id="p-founded">2015</div><div class="sb-lbl">Founded</div></div>
+      <div class="stat-block"><div class="sb-val" id="p-stage2">Series B</div><div class="sb-lbl">Funding Stage</div></div>
+      <div class="stat-block"><div class="sb-val" id="p-tech">12</div><div class="sb-lbl">Technologies</div></div>
+    </div>
+  </div>
+  <div class="profile-body">
+    <div class="info-card">
+      <div class="info-card-title">Business Details</div>
+      <div class="info-row"><span class="ir-key">Industry</span><span class="ir-val" id="d-industry">B2B SaaS / MarTech</span></div>
+      <div class="info-row"><span class="ir-key">Headquarters</span><span class="ir-val" id="d-hq">Austin, TX, USA</span></div>
+      <div class="info-row"><span class="ir-key">Business Type</span><span class="ir-val">Private Corporation</span></div>
+      <div class="info-row"><span class="ir-key">Revenue Range</span><span class="ir-val orange" id="d-rev">$10M – $25M</span></div>
+      <div class="info-row"><span class="ir-key">Target Market</span><span class="ir-val" id="d-market">Mid-Market B2B</span></div>
+      <div class="info-row"><span class="ir-key">Global Offices</span><span class="ir-val" id="d-offices">Austin · NYC · London</span></div>
+    </div>
+    <div class="info-card">
+      <div class="info-card-title">Technology Stack</div>
+      <div class="tech-cloud" id="d-techstack">
+        <span class="tech-pill">HubSpot CRM</span><span class="tech-pill">Salesforce</span>
+        <span class="tech-pill">Outreach</span><span class="tech-pill">ZoomInfo</span>
+        <span class="tech-pill">Slack</span><span class="tech-pill">AWS</span>
+        <span class="tech-pill">Segment</span><span class="tech-pill">Mixpanel</span>
+        <span class="tech-pill">Intercom</span><span class="tech-pill">Gong</span>
+        <span class="tech-pill">Notion</span><span class="tech-pill">Stripe</span>
+      </div>
+    </div>
+    <div class="info-card">
+      <div class="info-card-title">Key Services &amp; Certifications</div>
+      <div class="info-row"><span class="ir-key">Primary</span><span class="ir-val" id="d-svc1">Pipeline Automation</span></div>
+      <div class="info-row"><span class="ir-key">Secondary</span><span class="ir-val" id="d-svc2">Revenue Intelligence</span></div>
+      <div class="info-row"><span class="ir-key">Delivery</span><span class="ir-val orange">SaaS Platform</span></div>
+      <div class="info-row"><span class="ir-key">Certifications</span><span class="ir-val green">SOC 2 · ISO 27001</span></div>
+      <div class="info-row"><span class="ir-key">Website</span><span class="ir-val blue" id="d-web">acmesaas.com</span></div>
+    </div>
+    <div class="info-card">
+      <div class="info-card-title">Growth Signals</div>
+      <div class="info-row"><span class="ir-key">Hiring Signal</span><span class="ir-val orange">↑ Actively Hiring</span></div>
+      <div class="info-row"><span class="ir-key">Open Roles</span><span class="ir-val">18 positions</span></div>
+      <div class="info-row"><span class="ir-key">Web Traffic</span><span class="ir-val green">+34% QoQ</span></div>
+      <div class="info-row"><span class="ir-key">Last Funding</span><span class="ir-val">Mar 2025 · $22M</span></div>
+      <div class="info-row"><span class="ir-key">Intent Score</span><span class="ir-val orange">87 / 100</span></div>
+    </div>
+  </div>
+  <footer>
+    <div class="footer-left">partners.targetnxt.com &nbsp;·&nbsp; © 2026 TargetNXT</div>
+    <div class="footer-right"><div class="footer-dot"></div>Verified &amp; Moderated</div>
+  </footer>
+</div>
+
+<!-- ═══════════════════════ PAGE: EXEC PROFILE ═══════════════════════ -->
+<div class="page" id="page-exec">
+  <div class="exec-header">
+    <div class="breadcrumb">
+      <span onclick="goTo('home')">Home</span> / <span onclick="goTo('search')">Leaders</span> / <span style="color:var(--muted)">Sarah Chen</span>
+    </div>
+    <div class="exec-row">
+      <div class="exec-avatar">SC</div>
+      <div>
+        <div class="exec-name">Sarah Chen</div>
+        <div class="exec-title">Chief Revenue Officer</div>
+        <div class="exec-company">🏢 <span onclick="goTo('profile')" style="cursor:pointer;color:var(--orange-2)">Acme SaaS Solutions Inc</span> &nbsp;·&nbsp; 📍 Austin, TX, USA</div>
+        <div class="badge-row" style="margin-top:10px">
+          <span class="badge badge-v">✔ Verified Executive</span>
+          <span class="badge badge-b">⭐ Featured Leader</span>
+          <span class="badge badge-o">🎙 Podcast Guest</span>
+        </div>
+      </div>
+    </div>
+    <div class="stats-strip">
+      <div class="stat-block"><div class="sb-val">14 yrs</div><div class="sb-lbl">Industry Exp.</div></div>
+      <div class="stat-block"><div class="sb-val">$80M+</div><div class="sb-lbl">Revenue Led</div></div>
+      <div class="stat-block"><div class="sb-val">3</div><div class="sb-lbl">Podcast Appearances</div></div>
+      <div class="stat-block"><div class="sb-val">12</div><div class="sb-lbl">Speaking Events</div></div>
+      <div class="stat-block"><div class="sb-val">Top 50</div><div class="sb-lbl">CRO Award 2025</div></div>
+    </div>
+  </div>
+  <div class="exec-body">
+    <div class="info-card">
+      <div class="info-card-title">Strategic Focus Areas</div>
+      <div class="focus-item"><span class="focus-dot"></span>Enterprise revenue operations</div>
+      <div class="focus-item"><span class="focus-dot"></span>Go-to-market strategy design</div>
+      <div class="focus-item"><span class="focus-dot"></span>Sales &amp; marketing alignment</div>
+      <div class="focus-item"><span class="focus-dot"></span>Pipeline velocity optimization</div>
+      <div class="focus-item"><span class="focus-dot"></span>AI-powered sales automation</div>
+      <div class="focus-item"><span class="focus-dot"></span>Customer success &amp; NRR growth</div>
+    </div>
+    <div class="info-card">
+      <div class="info-card-title">Technologies Managed</div>
+      <div class="tech-cloud">
+        <span class="tech-pill">Salesforce</span><span class="tech-pill">HubSpot</span>
+        <span class="tech-pill">Gong</span><span class="tech-pill">Outreach</span>
+        <span class="tech-pill">Clari</span><span class="tech-pill">ZoomInfo</span>
+        <span class="tech-pill">Chorus</span><span class="tech-pill">Drift</span>
+      </div>
+    </div>
+    <div class="info-card">
+      <div class="info-card-title">Recent Activity &amp; Thought Leadership</div>
+      <div class="activity-item">
+        <div class="act-dot" style="background:var(--green)"></div>
+        <div class="act-body"><div class="act-text">Spoke at SaaStr Annual 2025 — "Scaling Revenue with AI-Driven Ops"</div><div class="act-time">Nov 2025</div></div>
+      </div>
+      <div class="activity-item">
+        <div class="act-dot" style="background:var(--blue)"></div>
+        <div class="act-body"><div class="act-text">Published article: "The Modern CRO Playbook for 2026"</div><div class="act-time">Jan 2026</div></div>
+      </div>
+      <div class="activity-item">
+        <div class="act-dot" style="background:var(--orange)"></div>
+        <div class="act-body"><div class="act-text">Guest on Revenue Collective Podcast — Episode 214</div><div class="act-time">Mar 2026</div></div>
+      </div>
+      <div class="activity-item">
+        <div class="act-dot" style="background:var(--amber)"></div>
+        <div class="act-body"><div class="act-text">Named in Forbes "Top 50 CROs Shaping B2B 2025" list</div><div class="act-time">Dec 2025</div></div>
+      </div>
+    </div>
+    <div class="info-card">
+      <div class="info-card-title">Professional Background</div>
+      <div class="info-row"><span class="ir-key">Previous Role</span><span class="ir-val">VP Sales · Gartner</span></div>
+      <div class="info-row"><span class="ir-key">Education</span><span class="ir-val">MBA, Wharton School</span></div>
+      <div class="info-row"><span class="ir-key">Industry</span><span class="ir-val">B2B SaaS · Revenue Ops</span></div>
+      <div class="info-row"><span class="ir-key">Awards</span><span class="ir-val orange">Top 50 CROs 2025</span></div>
+      <div class="info-row"><span class="ir-key">LinkedIn</span><span class="ir-val blue">linkedin.com/in/schen</span></div>
+    </div>
+  </div>
+  <footer>
+    <div class="footer-left">partners.targetnxt.com &nbsp;·&nbsp; © 2026 TargetNXT</div>
+    <div class="footer-right"><div class="footer-dot"></div>Verified Executive Profile</div>
+  </footer>
+</div>
+
+<!-- ═══════════════════════ PAGE: CRITERIA ═══════════════════════════ -->
+<div class="page" id="page-criteria">
+  <div class="profile-header" style="padding-bottom:20px;">
+    <div class="ph-name" style="margin-bottom:6px;">Business Acceptance Criteria</div>
+    <div class="ph-tagline">Only legitimate, verified B2B companies are permitted on this platform.</div>
+  </div>
+
+  <div class="section" style="padding-bottom:10px;">
+    <div class="no-spam-bar">
+      <span style="font-size:18px;">🚫</span>
+      <span><span class="no-spam-label">PROHIBITED:</span>Cryptocurrency &amp; Blockchain · Online Casino &amp; Gambling · Stock/Forex Trading · Adult Content · Payday Loans · MLM/Pyramid Schemes · Any spam or deceptive business</span>
+    </div>
+    <div class="section-title" style="margin-bottom:14px;">Prohibited Business Categories</div>
+    <div class="criteria-grid">
+      <div class="criteria-card prohibited">
+        <div class="crit-head"><span class="crit-icon">🪙</span><span class="crit-title red">Cryptocurrency &amp; Blockchain</span></div>
+        <div class="crit-desc">ICO promotions, crypto trading platforms, NFT marketplaces, DeFi schemes. No exceptions.</div>
+      </div>
+      <div class="criteria-card prohibited">
+        <div class="crit-head"><span class="crit-icon">📈</span><span class="crit-title red">Stock &amp; Forex Trading</span></div>
+        <div class="crit-desc">Retail trading platforms, penny-stock promoters, unregulated investment advisors.</div>
+      </div>
+      <div class="criteria-card prohibited">
+        <div class="crit-head"><span class="crit-icon">🎰</span><span class="crit-title red">Online Casino &amp; Gambling</span></div>
+        <div class="crit-desc">Online casinos, sports betting sites, poker rooms, lottery services.</div>
+      </div>
+      <div class="criteria-card prohibited">
+        <div class="crit-head"><span class="crit-icon">🔞</span><span class="crit-title red">Adult Content</span></div>
+        <div class="crit-desc">Adult entertainment websites and adult product retailers.</div>
+      </div>
+      <div class="criteria-card prohibited">
+        <div class="crit-head"><span class="crit-icon">💸</span><span class="crit-title red">Payday &amp; Predatory Finance</span></div>
+        <div class="crit-desc">High-interest lenders, loan sharks, debt collection agencies.</div>
+      </div>
+      <div class="criteria-card prohibited">
+        <div class="crit-head"><span class="crit-icon">🔺</span><span class="crit-title red">MLM &amp; Pyramid Schemes</span></div>
+        <div class="crit-desc">Multi-level marketing with no verifiable product, recruitment-only income models.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section" style="padding-top:10px;">
+    <div class="section-title" style="margin-bottom:14px;">Email &amp; Verification Requirements</div>
+    <div class="criteria-grid">
+      <div class="criteria-card required">
+        <div class="crit-head"><span class="crit-icon">✅</span><span class="crit-title green">Corporate Email Required</span></div>
+        <div class="crit-desc">Only corporate domain emails accepted (e.g. john@company.com). Gmail, Yahoo, Outlook, AOL, and disposable addresses are rejected.</div>
+      </div>
+      <div class="criteria-card required">
+        <div class="crit-head"><span class="crit-icon">🔍</span><span class="crit-title green">MX &amp; SMTP Verification</span></div>
+        <div class="crit-desc">All emails validated via MX record check, SMTP verification, and domain age confirmation.</div>
+      </div>
+      <div class="criteria-card required">
+        <div class="crit-head"><span class="crit-icon">🛡️</span><span class="crit-title green">Spam &amp; Duplicate Filter</span></div>
+        <div class="crit-desc">AI-based spam trap filtering, duplicate company detection, and role-based email screening.</div>
+      </div>
+      <div class="criteria-card required">
+        <div class="crit-head"><span class="crit-icon">📋</span><span class="crit-title green">5-Step Approval Workflow</span></div>
+        <div class="crit-desc">Email verify → Domain validate → Manual moderation → AI spam check → Publishing approval.</div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-left">partners.targetnxt.com &nbsp;·&nbsp; © 2026 TargetNXT</div>
+    <div class="footer-right"><div class="footer-dot"></div>Violations result in permanent ban</div>
+  </footer>
+</div>
+
+<!-- ═══════════════════════ DATA + LOGIC ════════════════════════════ -->
+<script>
+// ── Data ────────────────────────────────────────────────────────────
+const companies = [
+  { id:1, name:"Acme SaaS Solutions",   short:"A", color:"#FF6B00", industry:"B2B SaaS",         hq:"Austin, TX",       emp:"250–500",  rev:"$18M",  stage:"Series B",  tags:["HubSpot","Salesforce","Fast-Growing"],  verified:true },
+  { id:2, name:"PipelinePro Tech",      short:"P", color:"#7c3aed", industry:"MarTech",          hq:"San Francisco, CA",emp:"100–250",  rev:"$9M",   stage:"Series A",  tags:["HubSpot","Marketo","AI-Powered"],       verified:true },
+  { id:3, name:"DataBridge Corp",       short:"D", color:"#0891b2", industry:"Data Analytics",   hq:"Chicago, IL",      emp:"500–1000", rev:"$42M",  stage:"Series C",  tags:["Tableau","Snowflake","Enterprise"],     verified:true },
+  { id:4, name:"NexGen Revenue",        short:"N", color:"#059669", industry:"Revenue Ops",      hq:"New York, NY",     emp:"50–100",   rev:"$5M",   stage:"Series A",  tags:["Gong","Outreach","Startup"],            verified:true },
+  { id:5, name:"ClearSignal Analytics", short:"C", color:"#d97706", industry:"Business Intel.",  hq:"Boston, MA",       emp:"200–500",  rev:"$24M",  stage:"Series B",  tags:["Looker","BigQuery","BI"],               verified:true },
+  { id:6, name:"LeadForge Systems",     short:"L", color:"#be185d", industry:"Demand Gen",       hq:"Seattle, WA",      emp:"30–80",    rev:"$3M",   stage:"Seed",      tags:["HubSpot","LinkedIn Ads","B2B"],         verified:true },
+];
+
+// ── Router ───────────────────────────────────────────────────────────
+function goTo(page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-link').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-' + page).classList.add('active');
+  const nl = document.getElementById('nl-' + page);
+  if (nl) nl.classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+// ── Featured Cards ────────────────────────────────────────────────
+function renderFeatured() {
+  const grid = document.getElementById('featured-grid');
+  grid.innerHTML = companies.slice(0,4).map(c => `
+    <div class="c-card" onclick="openProfile(${c.id})">
+      <div class="cc-head">
+        <div class="cc-logo" style="background:${c.color}">${c.short}</div>
+        <div><div class="cc-name">${c.name}</div><div class="cc-sub">${c.industry} · ${c.hq}</div></div>
+      </div>
+      <div class="cc-tags">
+        ${c.tags.map(t => `<span class="tag tag-orange">${t}</span>`).join('')}
+        ${c.verified ? '<span class="tag tag-green">Verified</span>' : ''}
+      </div>
+      <div class="verified-badge">✔ Verified Business &nbsp;·&nbsp; ${c.emp} employees</div>
+    </div>
+  `).join('');
+}
+
+// ── Search Results ────────────────────────────────────────────────
+function renderResults(list) {
+  document.getElementById('res-cnt').textContent = list.length;
+  document.getElementById('result-list').innerHTML = list.map(c => `
+    <div class="r-row" onclick="openProfile(${c.id})">
+      <div class="r-logo" style="background:${c.color}">${c.short}</div>
+      <div class="r-main">
+        <div class="r-name">${c.name} ${c.verified ? '<span style="font-size:12px;color:var(--green)">✔</span>' : ''}</div>
+        <div class="r-meta">${c.industry} · ${c.hq} · Founded ${2010 + c.id}</div>
+        <div class="cc-tags">
+          ${c.tags.map(t => `<span class="tag tag-orange">${t}</span>`).join('')}
+          <span class="tag tag-green">Verified</span>
+          <span class="tag tag-blue">${c.stage}</span>
+        </div>
+      </div>
+      <div class="r-side">
+        <div class="r-emp">${c.emp}</div>
+        <div class="r-emp-lbl">Employees</div>
+        <div class="r-score">Score 92</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function doSearch() {
+  const q = document.getElementById('search-q').value.toLowerCase();
+  const filtered = q ? companies.filter(c =>
+    c.name.toLowerCase().includes(q) ||
+    c.industry.toLowerCase().includes(q) ||
+    c.tags.some(t => t.toLowerCase().includes(q))
+  ) : companies;
+  renderResults(filtered);
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const sq = document.getElementById('search-q');
+  if (sq) sq.addEventListener('keyup', doSearch);
+});
+
+// ── Open Profile ─────────────────────────────────────────────────
+function openProfile(id) {
+  const c = companies.find(x => x.id === id);
+  if (!c) return;
+  document.getElementById('bc-name').textContent = c.name;
+  document.getElementById('p-logo').textContent = c.short;
+  document.getElementById('p-logo').style.background = c.color;
+  document.getElementById('p-name').textContent = c.name;
+  document.getElementById('p-tagline').textContent = c.industry + ' · ' + c.hq;
+  document.getElementById('p-stage').textContent = c.stage;
+  document.getElementById('p-emp').textContent = c.emp;
+  document.getElementById('p-rev').textContent = c.rev;
+  document.getElementById('p-stage2').textContent = c.stage;
+  document.getElementById('d-industry').textContent = c.industry;
+  document.getElementById('d-hq').textContent = c.hq;
+  document.getElementById('d-rev').textContent = c.rev;
+  goTo('profile');
+}
+
+// ── Filter chips ─────────────────────────────────────────────────
+function toggleChip(el) { el.classList.toggle('on'); }
+
+// ── Init ─────────────────────────────────────────────────────────
+renderFeatured();
+renderResults(companies);
+</script>
+</body>
+</html>
+HTMLEOF

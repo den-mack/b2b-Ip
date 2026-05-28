@@ -1,0 +1,579 @@
+
+<h2 class="sr-only">TargetNXT B2B Market Intelligence Hub — interactive demo showing homepage, company directory, company profile, and executive profile views</h2>
+
+<style>
+  :root {
+    --tnxt-bg: #0B1828;
+    --tnxt-surface: #12243D;
+    --tnxt-card: #162D48;
+    --tnxt-border: #1E3D5C;
+    --tnxt-orange: #FF6B00;
+    --tnxt-orange-light: #FF8C33;
+    --tnxt-orange-dim: rgba(255,107,0,0.12);
+    --tnxt-text: #F0F4F8;
+    --tnxt-muted: #7A9BBB;
+    --tnxt-green: #22D37A;
+    --tnxt-blue: #3B9EFF;
+  }
+  .demo-wrap { font-family: var(--font-sans); }
+  .tab-bar {
+    display: flex; gap: 4px; padding: 10px 12px; background: #0B1828;
+    border-radius: 10px 10px 0 0; overflow-x: auto;
+  }
+  .tab-btn {
+    background: transparent; border: none; cursor: pointer;
+    padding: 6px 14px; border-radius: 6px; font-size: 12px; font-weight: 500;
+    color: #7A9BBB; white-space: nowrap; transition: all 0.15s;
+  }
+  .tab-btn.active { background: #FF6B00; color: #fff; }
+  .tab-btn:hover:not(.active) { background: #162D48; color: #F0F4F8; }
+  .screen { display: none; background: #0B1828; border-radius: 0 0 10px 10px; overflow: hidden; }
+  .screen.active { display: block; }
+
+  /* Nav */
+  .tnxt-nav {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 20px; background: #0B1828; border-bottom: 1px solid #1E3D5C;
+  }
+  .tnxt-logo { display: flex; align-items: center; gap: 8px; }
+  .tnxt-logo-mark {
+    width: 28px; height: 28px; background: #FF6B00; border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; font-weight: 700; color: #fff;
+  }
+  .tnxt-logo-text { font-size: 15px; font-weight: 500; color: #F0F4F8; }
+  .tnxt-logo-text span { color: #FF6B00; }
+  .nav-links { display: flex; gap: 18px; }
+  .nav-links a {
+    font-size: 12px; color: #7A9BBB; text-decoration: none;
+  }
+  .nav-links a:hover { color: #FF6B00; }
+  .nav-cta {
+    background: #FF6B00; color: #fff; border: none; border-radius: 6px;
+    padding: 6px 14px; font-size: 12px; font-weight: 500; cursor: pointer;
+  }
+
+  /* Hero */
+  .hero {
+    padding: 36px 20px 28px; text-align: center;
+    background: #0B1828;
+  }
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(255,107,0,0.12); border: 1px solid rgba(255,107,0,0.3);
+    border-radius: 20px; padding: 4px 12px; font-size: 11px; color: #FF8C33;
+    margin-bottom: 16px;
+  }
+  .hero h1 { font-size: 26px; font-weight: 500; color: #F0F4F8; margin: 0 0 10px; line-height: 1.3; }
+  .hero h1 span { color: #FF6B00; }
+  .hero p { font-size: 13px; color: #7A9BBB; margin: 0 auto 20px; max-width: 480px; line-height: 1.6; }
+  .search-box {
+    display: flex; gap: 0; max-width: 520px; margin: 0 auto 24px;
+    background: #12243D; border: 1px solid #1E3D5C; border-radius: 8px; overflow: hidden;
+  }
+  .search-box input {
+    flex: 1; background: transparent; border: none; outline: none;
+    padding: 10px 14px; font-size: 13px; color: #F0F4F8;
+  }
+  .search-box input::placeholder { color: #4A6A88; }
+  .search-btn {
+    background: #FF6B00; border: none; padding: 10px 18px;
+    font-size: 12px; font-weight: 500; color: #fff; cursor: pointer;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .hero-stats { display: flex; justify-content: center; gap: 28px; flex-wrap: wrap; }
+  .hero-stat { text-align: center; }
+  .hero-stat .num { font-size: 20px; font-weight: 500; color: #FF6B00; }
+  .hero-stat .lbl { font-size: 11px; color: #7A9BBB; }
+
+  /* Section */
+  .section { padding: 20px 20px; }
+  .section-hdr { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+  .section-title { font-size: 14px; font-weight: 500; color: #F0F4F8; }
+  .section-link { font-size: 11px; color: #FF6B00; cursor: pointer; text-decoration: none; }
+
+  /* Company cards */
+  .company-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 10px; }
+  .company-card {
+    background: #12243D; border: 1px solid #1E3D5C; border-radius: 8px;
+    padding: 14px; cursor: pointer; transition: border-color 0.15s;
+  }
+  .company-card:hover { border-color: #FF6B00; }
+  .cc-top { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+  .cc-logo {
+    width: 36px; height: 36px; border-radius: 7px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; font-weight: 700; color: #fff; flex-shrink: 0;
+  }
+  .cc-name { font-size: 13px; font-weight: 500; color: #F0F4F8; }
+  .cc-industry { font-size: 11px; color: #7A9BBB; }
+  .cc-tags { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 8px; }
+  .tag {
+    font-size: 10px; padding: 2px 7px; border-radius: 4px;
+    background: #1E3D5C; color: #7A9BBB;
+  }
+  .tag.orange { background: rgba(255,107,0,0.12); color: #FF8C33; }
+  .tag.green { background: rgba(34,211,122,0.1); color: #22D37A; }
+  .cc-verified { display: flex; align-items: center; gap: 4px; font-size: 10px; color: #22D37A; }
+
+  /* Search page */
+  .search-page { background: #0B1828; }
+  .search-header { padding: 16px 20px; background: #12243D; border-bottom: 1px solid #1E3D5C; }
+  .search-row { display: flex; gap: 10px; align-items: center; margin-bottom: 12px; }
+  .search-input-wrap {
+    flex: 1; display: flex; align-items: center; gap: 8px;
+    background: #0B1828; border: 1px solid #1E3D5C; border-radius: 7px; padding: 8px 12px;
+  }
+  .search-input-wrap i { color: #4A6A88; font-size: 16px; }
+  .search-input-wrap input { background: none; border: none; outline: none; color: #F0F4F8; font-size: 13px; flex: 1; }
+  .search-input-wrap input::placeholder { color: #4A6A88; }
+  .filter-pills { display: flex; gap: 6px; flex-wrap: wrap; }
+  .filter-pill {
+    font-size: 11px; padding: 4px 10px; border-radius: 5px;
+    border: 1px solid #1E3D5C; color: #7A9BBB; background: transparent; cursor: pointer;
+  }
+  .filter-pill.active { background: rgba(255,107,0,0.12); border-color: rgba(255,107,0,0.3); color: #FF8C33; }
+  .results-meta { display: flex; justify-content: space-between; align-items: center; padding: 10px 20px; }
+  .results-count { font-size: 12px; color: #7A9BBB; }
+  .results-count span { color: #FF6B00; font-weight: 500; }
+  .result-list { padding: 0 20px 20px; display: flex; flex-direction: column; gap: 8px; }
+  .result-row {
+    background: #12243D; border: 1px solid #1E3D5C; border-radius: 8px;
+    padding: 14px 16px; display: flex; align-items: center; gap: 14px; cursor: pointer;
+  }
+  .result-row:hover { border-color: #FF6B00; }
+  .rr-logo {
+    width: 40px; height: 40px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 15px; font-weight: 700; color: #fff; flex-shrink: 0;
+  }
+  .rr-main { flex: 1; min-width: 0; }
+  .rr-name { font-size: 13px; font-weight: 500; color: #F0F4F8; margin-bottom: 2px; }
+  .rr-meta { font-size: 11px; color: #7A9BBB; }
+  .rr-tags { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 5px; }
+  .rr-right { text-align: right; flex-shrink: 0; }
+  .rr-emp { font-size: 12px; color: #F0F4F8; font-weight: 500; }
+  .rr-emp-lbl { font-size: 10px; color: #7A9BBB; }
+
+  /* Profile page */
+  .profile-hero {
+    background: #12243D; border-bottom: 1px solid #1E3D5C; padding: 20px;
+  }
+  .ph-top { display: flex; align-items: flex-start; gap: 16px; margin-bottom: 14px; }
+  .ph-logo {
+    width: 56px; height: 56px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px; font-weight: 700; color: #fff; flex-shrink: 0;
+  }
+  .ph-info { flex: 1; }
+  .ph-name { font-size: 18px; font-weight: 500; color: #F0F4F8; margin-bottom: 2px; }
+  .ph-tagline { font-size: 12px; color: #7A9BBB; margin-bottom: 8px; }
+  .ph-badges { display: flex; gap: 6px; flex-wrap: wrap; }
+  .ph-badge {
+    font-size: 10px; padding: 3px 8px; border-radius: 5px;
+    display: flex; align-items: center; gap: 4px;
+  }
+  .ph-badge.verified { background: rgba(34,211,122,0.1); color: #22D37A; }
+  .ph-badge.tech { background: rgba(59,158,255,0.1); color: #3B9EFF; }
+  .ph-badge.active { background: rgba(255,107,0,0.12); color: #FF8C33; }
+  .profile-stats { display: flex; gap: 0; border-top: 1px solid #1E3D5C; padding-top: 14px; }
+  .pstat { flex: 1; text-align: center; padding: 0 8px; border-right: 1px solid #1E3D5C; }
+  .pstat:last-child { border-right: none; }
+  .pstat .v { font-size: 16px; font-weight: 500; color: #FF6B00; }
+  .pstat .l { font-size: 10px; color: #7A9BBB; margin-top: 1px; }
+  .profile-body { padding: 16px 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .pb-card {
+    background: #12243D; border: 1px solid #1E3D5C; border-radius: 8px; padding: 14px;
+  }
+  .pb-card h3 { font-size: 11px; font-weight: 500; color: #7A9BBB; margin: 0 0 10px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .pb-row { display: flex; justify-content: space-between; align-items: center; padding: 5px 0; border-bottom: 1px solid #1A3550; }
+  .pb-row:last-child { border-bottom: none; }
+  .pb-lbl { font-size: 11px; color: #7A9BBB; }
+  .pb-val { font-size: 11px; color: #F0F4F8; font-weight: 500; text-align: right; max-width: 140px; }
+  .pb-val.orange { color: #FF8C33; }
+  .pb-val.green { color: #22D37A; }
+  .tech-stack { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 4px; }
+  .tech-tag {
+    font-size: 10px; padding: 3px 8px; border-radius: 5px;
+    background: rgba(59,158,255,0.1); color: #3B9EFF; border: 1px solid rgba(59,158,255,0.2);
+  }
+
+  /* Exec profile */
+  .exec-hero { background: #12243D; border-bottom: 1px solid #1E3D5C; padding: 20px; }
+  .exec-top { display: flex; gap: 16px; align-items: flex-start; margin-bottom: 16px; }
+  .exec-avatar {
+    width: 60px; height: 60px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px; font-weight: 500; color: #fff; flex-shrink: 0;
+    background: linear-gradient(135deg, #1A3D6B, #0D2749);
+    border: 2px solid #FF6B00;
+  }
+  .exec-info .name { font-size: 18px; font-weight: 500; color: #F0F4F8; margin-bottom: 2px; }
+  .exec-info .title { font-size: 12px; color: #FF8C33; margin-bottom: 4px; }
+  .exec-info .company { font-size: 12px; color: #7A9BBB; display: flex; align-items: center; gap: 5px; }
+  .exec-body { padding: 16px 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .focus-list { list-style: none; padding: 0; margin: 0; }
+  .focus-list li { font-size: 11px; color: #A0BDD8; padding: 4px 0; border-bottom: 1px solid #1A3550; display: flex; align-items: center; gap: 6px; }
+  .focus-list li:last-child { border-bottom: none; }
+  .focus-list li::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: #FF6B00; flex-shrink: 0; }
+  .activity-row { display: flex; gap: 10px; align-items: flex-start; padding: 7px 0; border-bottom: 1px solid #1A3550; }
+  .activity-row:last-child { border-bottom: none; }
+  .act-dot { width: 8px; height: 8px; border-radius: 50%; background: #22D37A; margin-top: 4px; flex-shrink: 0; }
+  .act-text { font-size: 11px; color: #A0BDD8; line-height: 1.4; }
+  .act-time { font-size: 10px; color: #4A6A88; margin-top: 2px; }
+
+  /* Footer-like nav in screens */
+  .screen-footer { padding: 10px 20px; background: #0B1828; border-top: 1px solid #1E3D5C; display: flex; justify-content: space-between; align-items: center; }
+  .sf-brand { font-size: 10px; color: #4A6A88; }
+  .sf-badge { font-size: 10px; color: #22D37A; display: flex; align-items: center; gap: 4px; }
+</style>
+
+<div class="demo-wrap">
+  <div class="tab-bar">
+    <button class="tab-btn active" onclick="showTab('home')"><i class="ti ti-home" aria-hidden="true"></i> Homepage</button>
+    <button class="tab-btn" onclick="showTab('search')"><i class="ti ti-search" aria-hidden="true"></i> Company Search</button>
+    <button class="tab-btn" onclick="showTab('profile')"><i class="ti ti-building" aria-hidden="true"></i> Company Profile</button>
+    <button class="tab-btn" onclick="showTab('exec')"><i class="ti ti-user-circle" aria-hidden="true"></i> Executive Profile</button>
+  </div>
+
+  <!-- HOME -->
+  <div class="screen active" id="tab-home">
+    <div class="tnxt-nav">
+      <div class="tnxt-logo">
+        <div class="tnxt-logo-mark">T</div>
+        <div class="tnxt-logo-text">Target<span>NXT</span> Intelligence</div>
+      </div>
+      <div class="nav-links">
+        <a href="#">Companies</a>
+        <a href="#">Leaders</a>
+        <a href="#">Industries</a>
+        <a href="#">Tech Insights</a>
+      </div>
+      <button class="nav-cta">Submit Company</button>
+    </div>
+    <div class="hero">
+      <div class="hero-badge"><i class="ti ti-bolt" aria-hidden="true"></i> B2B Intelligence Hub — Now Live</div>
+      <h1>Discover the companies &amp; leaders<br>driving <span>modern B2B growth</span></h1>
+      <p>Verified firmographic intelligence, executive profiles, technographic insights, and strategic market signals — all in one place.</p>
+      <div class="search-box">
+        <input type="text" placeholder="Search companies, industries, technologies, leaders..." readonly />
+        <button class="search-btn"><i class="ti ti-search" aria-hidden="true"></i> Search</button>
+      </div>
+      <div class="hero-stats">
+        <div class="hero-stat"><div class="num">48K+</div><div class="lbl">Verified Companies</div></div>
+        <div class="hero-stat"><div class="num">120K+</div><div class="lbl">Executive Profiles</div></div>
+        <div class="hero-stat"><div class="num">380+</div><div class="lbl">Industries Covered</div></div>
+        <div class="hero-stat"><div class="num">99%</div><div class="lbl">Verification Rate</div></div>
+      </div>
+    </div>
+    <div class="section">
+      <div class="section-hdr">
+        <div class="section-title">Featured Companies</div>
+        <a class="section-link">View all →</a>
+      </div>
+      <div class="company-grid">
+        <div class="company-card">
+          <div class="cc-top">
+            <div class="cc-logo" style="background:#1a56db;">S</div>
+            <div><div class="cc-name">SalesForce Corp</div><div class="cc-industry">CRM · SaaS</div></div>
+          </div>
+          <div class="cc-tags">
+            <span class="tag orange">Fortune 500</span>
+            <span class="tag">USA</span>
+            <span class="tag green">Verified</span>
+          </div>
+          <div class="cc-verified"><i class="ti ti-rosette-discount-check" aria-hidden="true"></i> Verified Business</div>
+        </div>
+        <div class="company-card">
+          <div class="cc-top">
+            <div class="cc-logo" style="background:#7c3aed;">H</div>
+            <div><div class="cc-name">HubSpot Inc</div><div class="cc-industry">MarTech · SaaS</div></div>
+          </div>
+          <div class="cc-tags">
+            <span class="tag orange">MarTech Leader</span>
+            <span class="tag">USA</span>
+            <span class="tag green">Verified</span>
+          </div>
+          <div class="cc-verified"><i class="ti ti-rosette-discount-check" aria-hidden="true"></i> Verified Business</div>
+        </div>
+        <div class="company-card">
+          <div class="cc-top">
+            <div class="cc-logo" style="background:#059669;">Z</div>
+            <div><div class="cc-name">ZoomInfo Tech</div><div class="cc-industry">B2B Intelligence</div></div>
+          </div>
+          <div class="cc-tags">
+            <span class="tag orange">AI-Powered</span>
+            <span class="tag">USA</span>
+            <span class="tag green">Verified</span>
+          </div>
+          <div class="cc-verified"><i class="ti ti-rosette-discount-check" aria-hidden="true"></i> Verified Business</div>
+        </div>
+      </div>
+    </div>
+    <div class="screen-footer">
+      <div class="sf-brand">partners.targetnxt.com · © 2026 TargetNXT</div>
+      <div class="sf-badge"><i class="ti ti-shield-check" aria-hidden="true"></i> Spam-free · No Crypto · No Casino · No Stock Trading</div>
+    </div>
+  </div>
+
+  <!-- SEARCH -->
+  <div class="screen" id="tab-search">
+    <div class="tnxt-nav">
+      <div class="tnxt-logo">
+        <div class="tnxt-logo-mark">T</div>
+        <div class="tnxt-logo-text">Target<span>NXT</span> Intelligence</div>
+      </div>
+      <div class="nav-links"><a href="#">Companies</a><a href="#">Leaders</a><a href="#">Industries</a></div>
+      <button class="nav-cta">Submit Company</button>
+    </div>
+    <div class="search-header">
+      <div class="search-row">
+        <div class="search-input-wrap">
+          <i class="ti ti-search" aria-hidden="true"></i>
+          <input type="text" value="SaaS companies using HubSpot" readonly />
+        </div>
+        <button class="nav-cta" style="padding:8px 16px; white-space:nowrap;">Filter</button>
+      </div>
+      <div class="filter-pills">
+        <span class="filter-pill active">All Industries</span>
+        <span class="filter-pill active">SaaS</span>
+        <span class="filter-pill">Healthcare</span>
+        <span class="filter-pill">FinTech</span>
+        <span class="filter-pill">Manufacturing</span>
+        <span class="filter-pill active">USA</span>
+        <span class="filter-pill">1–500 Employees</span>
+        <span class="filter-pill active">Verified Only</span>
+      </div>
+    </div>
+    <div class="results-meta">
+      <div class="results-count">Showing <span>1,248</span> verified companies</div>
+      <div style="font-size:11px;color:#7A9BBB;">Sort: Relevance ▾</div>
+    </div>
+    <div class="result-list">
+      <div class="result-row">
+        <div class="rr-logo" style="background:#FF6B00;">A</div>
+        <div class="rr-main">
+          <div class="rr-name">Acme SaaS Solutions Inc <i class="ti ti-rosette-discount-check" style="color:#22D37A;font-size:13px;" aria-hidden="true"></i></div>
+          <div class="rr-meta">B2B SaaS · Austin, TX, USA · Founded 2015</div>
+          <div class="rr-tags">
+            <span class="tag">HubSpot</span><span class="tag">Salesforce</span>
+            <span class="tag orange">Fast-Growing</span><span class="tag green">Verified</span>
+          </div>
+        </div>
+        <div class="rr-right">
+          <div class="rr-emp">250–500</div>
+          <div class="rr-emp-lbl">Employees</div>
+        </div>
+      </div>
+      <div class="result-row">
+        <div class="rr-logo" style="background:#7c3aed;">P</div>
+        <div class="rr-main">
+          <div class="rr-name">PipelinePro Technologies <i class="ti ti-rosette-discount-check" style="color:#22D37A;font-size:13px;" aria-hidden="true"></i></div>
+          <div class="rr-meta">MarTech · San Francisco, CA, USA · Founded 2018</div>
+          <div class="rr-tags">
+            <span class="tag">HubSpot</span><span class="tag">Marketo</span>
+            <span class="tag orange">Series B</span><span class="tag green">Verified</span>
+          </div>
+        </div>
+        <div class="rr-right">
+          <div class="rr-emp">100–250</div>
+          <div class="rr-emp-lbl">Employees</div>
+        </div>
+      </div>
+      <div class="result-row">
+        <div class="rr-logo" style="background:#0891b2;">D</div>
+        <div class="rr-main">
+          <div class="rr-name">DataBridge Corp <i class="ti ti-rosette-discount-check" style="color:#22D37A;font-size:13px;" aria-hidden="true"></i></div>
+          <div class="rr-meta">Data Analytics · Chicago, IL, USA · Founded 2012</div>
+          <div class="rr-tags">
+            <span class="tag">HubSpot</span><span class="tag">Tableau</span>
+            <span class="tag orange">Enterprise</span><span class="tag green">Verified</span>
+          </div>
+        </div>
+        <div class="rr-right">
+          <div class="rr-emp">500–1000</div>
+          <div class="rr-emp-lbl">Employees</div>
+        </div>
+      </div>
+      <div class="result-row">
+        <div class="rr-logo" style="background:#059669;">N</div>
+        <div class="rr-main">
+          <div class="rr-name">NexGen Revenue Systems <i class="ti ti-rosette-discount-check" style="color:#22D37A;font-size:13px;" aria-hidden="true"></i></div>
+          <div class="rr-meta">Revenue Intelligence · New York, NY, USA · Founded 2019</div>
+          <div class="rr-tags">
+            <span class="tag">HubSpot</span><span class="tag">Outreach</span>
+            <span class="tag orange">AI-Powered</span><span class="tag green">Verified</span>
+          </div>
+        </div>
+        <div class="rr-right">
+          <div class="rr-emp">50–100</div>
+          <div class="rr-emp-lbl">Employees</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- COMPANY PROFILE -->
+  <div class="screen" id="tab-profile">
+    <div class="tnxt-nav">
+      <div class="tnxt-logo">
+        <div class="tnxt-logo-mark">T</div>
+        <div class="tnxt-logo-text">Target<span>NXT</span> Intelligence</div>
+      </div>
+      <div style="font-size:11px;color:#7A9BBB;">Companies / SaaS / Acme SaaS Solutions</div>
+      <button class="nav-cta">Export Profile</button>
+    </div>
+    <div class="profile-hero">
+      <div class="ph-top">
+        <div class="ph-logo" style="background:#FF6B00;font-size:22px;">A</div>
+        <div class="ph-info">
+          <div class="ph-name">Acme SaaS Solutions Inc</div>
+          <div class="ph-tagline">B2B Revenue Intelligence & Pipeline Automation Platform · Austin, TX</div>
+          <div class="ph-badges">
+            <span class="ph-badge verified"><i class="ti ti-rosette-discount-check" aria-hidden="true"></i> Verified Business</span>
+            <span class="ph-badge tech"><i class="ti ti-cpu" aria-hidden="true"></i> TechVerified</span>
+            <span class="ph-badge active"><i class="ti ti-trending-up" aria-hidden="true"></i> Fast-Growing</span>
+          </div>
+        </div>
+      </div>
+      <div class="profile-stats">
+        <div class="pstat"><div class="v">280</div><div class="l">Employees</div></div>
+        <div class="pstat"><div class="v">$18M</div><div class="l">Est. Revenue</div></div>
+        <div class="pstat"><div class="v">2015</div><div class="l">Founded</div></div>
+        <div class="pstat"><div class="v">Series B</div><div class="l">Stage</div></div>
+        <div class="pstat"><div class="v">12</div><div class="l">Technologies</div></div>
+      </div>
+    </div>
+    <div class="profile-body">
+      <div class="pb-card">
+        <h3>Business Details</h3>
+        <div class="pb-row"><span class="pb-lbl">Industry</span><span class="pb-val">B2B SaaS / MarTech</span></div>
+        <div class="pb-row"><span class="pb-lbl">Headquarters</span><span class="pb-val">Austin, TX, USA</span></div>
+        <div class="pb-row"><span class="pb-lbl">Business Type</span><span class="pb-val">Private Corporation</span></div>
+        <div class="pb-row"><span class="pb-lbl">Revenue Range</span><span class="pb-val orange">$10M – $25M</span></div>
+        <div class="pb-row"><span class="pb-lbl">Target Market</span><span class="pb-val">Mid-Market B2B</span></div>
+        <div class="pb-row"><span class="pb-lbl">Global Offices</span><span class="pb-val">Austin · NYC · London</span></div>
+      </div>
+      <div class="pb-card">
+        <h3>Technology Stack</h3>
+        <div class="tech-stack">
+          <span class="tech-tag">HubSpot CRM</span>
+          <span class="tech-tag">Salesforce</span>
+          <span class="tech-tag">Outreach</span>
+          <span class="tech-tag">ZoomInfo</span>
+          <span class="tech-tag">Slack</span>
+          <span class="tech-tag">AWS</span>
+          <span class="tech-tag">Segment</span>
+          <span class="tech-tag">Mixpanel</span>
+          <span class="tech-tag">Intercom</span>
+          <span class="tech-tag">Gong</span>
+          <span class="tech-tag">Notion</span>
+          <span class="tech-tag">Stripe</span>
+        </div>
+      </div>
+      <div class="pb-card">
+        <h3>Key Services</h3>
+        <div class="pb-row"><span class="pb-lbl">Primary</span><span class="pb-val">Pipeline Automation</span></div>
+        <div class="pb-row"><span class="pb-lbl">Secondary</span><span class="pb-val">Revenue Intelligence</span></div>
+        <div class="pb-row"><span class="pb-lbl">Product</span><span class="pb-val orange">SaaS Platform</span></div>
+        <div class="pb-row"><span class="pb-lbl">Certifications</span><span class="pb-val green">SOC 2 · ISO 27001</span></div>
+      </div>
+      <div class="pb-card">
+        <h3>Growth Signals</h3>
+        <div class="pb-row"><span class="pb-lbl">Hiring Signal</span><span class="pb-val orange">↑ Active Hiring</span></div>
+        <div class="pb-row"><span class="pb-lbl">Web Traffic</span><span class="pb-val green">+34% QoQ</span></div>
+        <div class="pb-row"><span class="pb-lbl">Job Postings</span><span class="pb-val">18 Open Roles</span></div>
+        <div class="pb-row"><span class="pb-lbl">Last Funding</span><span class="pb-val">Mar 2025 · $22M</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EXEC PROFILE -->
+  <div class="screen" id="tab-exec">
+    <div class="tnxt-nav">
+      <div class="tnxt-logo">
+        <div class="tnxt-logo-mark">T</div>
+        <div class="tnxt-logo-text">Target<span>NXT</span> Intelligence</div>
+      </div>
+      <div style="font-size:11px;color:#7A9BBB;">Leaders / SaaS / Sarah Chen</div>
+      <button class="nav-cta">Export Profile</button>
+    </div>
+    <div class="exec-hero">
+      <div class="exec-top">
+        <div class="exec-avatar">SC</div>
+        <div class="exec-info">
+          <div class="name">Sarah Chen</div>
+          <div class="title">Chief Revenue Officer · Acme SaaS Solutions</div>
+          <div class="company"><i class="ti ti-building" aria-hidden="true"></i> Acme SaaS Solutions Inc &nbsp;·&nbsp; <i class="ti ti-map-pin" aria-hidden="true"></i> Austin, TX</div>
+        </div>
+      </div>
+      <div class="ph-badges" style="margin-bottom:14px;">
+        <span class="ph-badge verified"><i class="ti ti-rosette-discount-check" aria-hidden="true"></i> Verified Executive</span>
+        <span class="ph-badge tech"><i class="ti ti-star" aria-hidden="true"></i> Featured Leader</span>
+        <span class="ph-badge active"><i class="ti ti-microphone" aria-hidden="true"></i> Podcast Guest</span>
+      </div>
+      <div style="display:flex;gap:16px;border-top:1px solid #1E3D5C;padding-top:14px;">
+        <div class="pstat" style="border:none;text-align:left;padding:0 16px 0 0;border-right:1px solid #1E3D5C;"><div class="v">14 yrs</div><div class="l">Industry Exp.</div></div>
+        <div class="pstat" style="border:none;text-align:left;padding:0 16px;border-right:1px solid #1E3D5C;"><div class="v">$80M+</div><div class="l">Revenue Led</div></div>
+        <div class="pstat" style="border:none;text-align:left;padding:0 16px;border-right:1px solid #1E3D5C;"><div class="v">3</div><div class="l">Podcast Appearances</div></div>
+        <div class="pstat" style="border:none;text-align:left;padding:0 16px;"><div class="v">12</div><div class="l">Speaking Events</div></div>
+      </div>
+    </div>
+    <div class="exec-body">
+      <div class="pb-card">
+        <h3>Strategic Focus Areas</h3>
+        <ul class="focus-list">
+          <li>Enterprise revenue operations</li>
+          <li>Go-to-market strategy</li>
+          <li>Sales &amp; marketing alignment</li>
+          <li>Pipeline velocity optimization</li>
+          <li>AI-powered sales automation</li>
+          <li>Customer success &amp; retention</li>
+        </ul>
+      </div>
+      <div class="pb-card">
+        <h3>Technologies Managed</h3>
+        <div class="tech-stack">
+          <span class="tech-tag">Salesforce</span>
+          <span class="tech-tag">HubSpot</span>
+          <span class="tech-tag">Gong</span>
+          <span class="tech-tag">Outreach</span>
+          <span class="tech-tag">Clari</span>
+          <span class="tech-tag">ZoomInfo</span>
+          <span class="tech-tag">Chorus</span>
+        </div>
+      </div>
+      <div class="pb-card">
+        <h3>Recent Activity</h3>
+        <div class="activity-row">
+          <div class="act-dot"></div>
+          <div><div class="act-text">Spoke at SaaStr Annual 2025 on "Scaling Revenue with AI"</div><div class="act-time">Nov 2025</div></div>
+        </div>
+        <div class="activity-row">
+          <div class="act-dot" style="background:#3B9EFF;"></div>
+          <div><div class="act-text">Published: "The Modern CRO Playbook for 2026"</div><div class="act-time">Jan 2026</div></div>
+        </div>
+        <div class="activity-row">
+          <div class="act-dot" style="background:#FF6B00;"></div>
+          <div><div class="act-text">Guest on Revenue Collective Podcast — Episode 214</div><div class="act-time">Mar 2026</div></div>
+        </div>
+      </div>
+      <div class="pb-card">
+        <h3>Professional Background</h3>
+        <div class="pb-row"><span class="pb-lbl">Previous Role</span><span class="pb-val">VP Sales · Gartner</span></div>
+        <div class="pb-row"><span class="pb-lbl">Education</span><span class="pb-val">MBA, Wharton</span></div>
+        <div class="pb-row"><span class="pb-lbl">Awards</span><span class="pb-val orange">Top 50 CROs 2025</span></div>
+        <div class="pb-row"><span class="pb-lbl">LinkedIn</span><span class="pb-val" style="color:#3B9EFF;">linkedin.com/in/schen</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function showTab(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  event.target.closest('.tab-btn').classList.add('active');
+}
+</script>
